@@ -1,5 +1,6 @@
-import { Column, Model, Table, DataType } from 'sequelize-typescript';
+import { Column, Model, Table, DataType, HasMany } from 'sequelize-typescript';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { ExtraAddress } from '../../extra-address/models/extra.address.model';
 
 type CreateAttr = {
   phone_number: string;
@@ -59,4 +60,25 @@ export class User extends Model<CreateAttr> {
     defaultValue: false,
   })
   position: boolean;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+  })
+  is_partner: boolean;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+  })
+  order_notifications: boolean;
+
+  @Field(() => [ExtraAddress], {
+    nullable: true,
+    defaultValue: [],
+  })
+  @HasMany(() => ExtraAddress, {
+    onDelete: 'CASCADE',
+  })
+  extra_addresses: typeof ExtraAddress[];
 }

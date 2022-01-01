@@ -3,6 +3,7 @@ import { UsersModule } from './users/users.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { ExtraAddressModule } from './extra-address/extra-address.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
       autoSchemaFile: true,
     }),
     UsersModule,
+    ExtraAddressModule,
   ],
 })
 export class AppModule {}
