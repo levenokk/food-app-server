@@ -1,0 +1,15 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres
+    restart: always
+    container_name: food-app-db
+    environment:
+      POSTGRES_PASSWORD: food-app
+      POSTGRES_DB: food-app
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
