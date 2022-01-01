@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { UsersService } from '../users/users.service';
 import { SendCodeInput } from '../users/dto/inputs';
 import { AuthService } from './auth.service';
@@ -17,7 +17,7 @@ export class AuthResolver {
     return this.usersService.sendCode(data);
   }
 
-  @Mutation(() => Token)
+  @Query(() => Token)
   public async login(@Args('data') { phone, code, is_partner }: LoginInput) {
     return this.authService.validateUser(phone, code, is_partner);
   }

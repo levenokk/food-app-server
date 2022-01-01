@@ -1,21 +1,15 @@
-import { Field, ID, InputType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 
 @InputType({
   description: 'Input for update user',
 })
 export class UpdateUserInput {
-  @Field(() => ID)
-  id: string;
+  id: number;
 
   @Field(() => String, {
     nullable: true,
   })
   name?: string;
-
-  @Field(() => String, {
-    nullable: true,
-  })
-  phone_number?: string;
 
   @Field(() => String, {
     nullable: true,

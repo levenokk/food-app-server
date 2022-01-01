@@ -1,44 +1,27 @@
-import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { User } from './models/user.model';
-import { CreateUserInput, UpdateUserInput } from './dto/inputs';
+import { UpdateUserInput } from './dto/inputs';
+import { CurrentUser } from '../auth/decorators/currentUser';
+import { UseGuards } from '@nestjs/common';
+import { GqlAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Resolver(() => User)
 export class UsersResolver {
   constructor(private usersService: UsersService) {}
 
-  @Query(() => [User])
-  public async getUsers() {
-    return this.usersService.getUsers();
-  }
-
+  @UseGuards(GqlAuthGuard)
   @Query(() => User)
-  public async getUser(
-    @Args('id', {
-      type: () => ID,
-    })
-    pk: string,
-  ) {
-    return this.usersService.finUserById(pk);
+  public async getCurrentUser(@CurrentUser() user: User) {
+    return this.usersService.finUserById(user.id);
   }
 
+  @UseGuards(GqlAuthGuard)
   @Mutation(() => User)
-  public async createUser(@Args('data') data: CreateUserInput) {
-    return this.usersService.createUser(data);
-  }
-
-  @Mutation(() => User)
-  public async updateUser(@Args('data') data: UpdateUserInput) {
-    return this.usersService.updateUser(data);
-  }
-
-  @Mutation(() => Boolean)
-  public async removeUser(
-    @Args('id', {
-      type: () => ID,
-    })
-    pk: string,
+  public async updateUser(
+    @CurrentUser() user: User,
+    @Args('data') data: UpdateUserInput,
   ) {
-    return this.usersService.removeUser(pk);
+    return this.usersService.updateUser({ ...data, id: user.id });
   }
 }

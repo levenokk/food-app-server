@@ -12,7 +12,4 @@ export class UpdateExtraAddressInput {
 
   @Field(() => ID)
   id: number;
-
-  @Field(() => ID)
-  user_id: number;
 }

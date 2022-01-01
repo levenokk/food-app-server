@@ -10,8 +10,9 @@ export class ExtraAddressService {
     private extraAddressModel: typeof ExtraAddress,
   ) {}
 
-  public async createExtraAddress(data: CreateExtraAddressInput) {
-    // todo: сделать получения id с токена авторизации
+  public async createExtraAddress(
+    data: CreateExtraAddressInput & { user_id: number },
+  ) {
     return this.extraAddressModel.create(data);
   }
 
@@ -19,9 +20,7 @@ export class ExtraAddressService {
     id,
     user_id,
     ...data
-  }: UpdateExtraAddressInput) {
-    // todo: сделать получения id с токена авторизации
-
+  }: UpdateExtraAddressInput & { user_id: number }) {
     const address = await this.extraAddressModel.findByPk(id);
 
     if (address.user_id !== user_id) {

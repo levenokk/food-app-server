@@ -4,8 +4,9 @@ import { ExtraAddress } from '../../extra-address/models/extra.address.model';
 
 type CreateAttr = {
   phone_number: string;
-  name: string;
+  name?: string;
   is_partner: boolean;
+  is_new?: boolean;
 };
 
 @ObjectType()
@@ -29,18 +30,15 @@ export class User extends Model<CreateAttr> {
   phone_number: string;
 
   @Column({
-    type: DataType.INTEGER({
-      length: 6,
-      decimals: 6,
-    }),
+    allowNull: true,
   })
-  code: number;
+  code: string;
 
   @Field(() => String)
   @Column({
-    allowNull: false,
+    allowNull: true,
   })
-  name: string;
+  name?: string;
 
   @Field(() => String)
   @Column({
@@ -82,4 +80,11 @@ export class User extends Model<CreateAttr> {
     onDelete: 'CASCADE',
   })
   extra_addresses: typeof ExtraAddress[];
+
+  @Field(() => Boolean)
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: true,
+  })
+  is_new: boolean;
 }
