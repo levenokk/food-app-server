@@ -32,7 +32,15 @@ export class ExtraAddressService {
     return address;
   }
 
-  // public async removeExtraAddress({id, useId}: {}) {
-  //   const address = await this.extraAddressModel.findByPk()
-  // }
+  public async removeExtraAddress(pk: number, user_id: number) {
+    const address = await this.extraAddressModel.findByPk(pk);
+
+    if (address.user_id === user_id) {
+      await address.destroy();
+
+      return address;
+    }
+
+    throw new ForbiddenException();
+  }
 }

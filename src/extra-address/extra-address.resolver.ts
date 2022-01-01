@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, ID, Mutation, Resolver } from '@nestjs/graphql';
 import { ExtraAddressService } from './extra-address.service';
 import { ExtraAddress } from './models/extra.address.model';
 import { CreateExtraAddressInput, UpdateExtraAddressInput } from './dto/inputs';
@@ -33,5 +33,14 @@ export class ExtraAddressResolver {
       ...data,
       user_id: user.id,
     });
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => ExtraAddress)
+  public async removeExtraAddress(
+    @CurrentUser() user: User,
+    @Args('id', { type: () => ID }) id: number,
+  ) {
+    return this.extraAddressService.removeExtraAddress(id, user.id);
   }
 }
