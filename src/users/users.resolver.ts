@@ -19,7 +19,7 @@ export class UsersResolver {
     })
     pk: string,
   ) {
-    return this.usersService.getUserById(pk);
+    return this.usersService.finUserById(pk);
   }
 
   @Mutation(() => User)

@@ -4,6 +4,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ExtraAddressModule } from './extra-address/extra-address.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ExtraAddressModule } from './extra-address/extra-address.module';
     }),
     UsersModule,
     ExtraAddressModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

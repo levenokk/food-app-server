@@ -1,7 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './models/user.model';
-import { CreateUserInput, UpdateUserInput } from './dto/inputs';
+import { CreateUserInput, UpdateUserInput, SendCodeInput } from './dto/inputs';
 import { ExtraAddress } from '../extra-address/models/extra.address.model';
 
 @Injectable()
@@ -9,6 +13,17 @@ export class UsersService {
   constructor(@InjectModel(User) private userModel: typeof User) {}
 
   public async createUser(data: CreateUserInput) {
+    const isUserExists = await this.userModel.findOne({
+      where: {
+        phone_number: data.phone_number,
+        is_partner: data.is_partner,
+      },
+    });
+
+    if (isUserExists) {
+      throw new BadRequestException('User is exists');
+    }
+
     const user = await this.userModel.create(data, {
       include: [ExtraAddress],
     });
@@ -27,9 +42,18 @@ export class UsersService {
     });
   }
 
-  public async getUserById(pk: string) {
+  public async finUserById(pk: string) {
     return this.userModel.findByPk(pk, {
       include: [ExtraAddress],
+    });
+  }
+
+  public async findUserByPhone(phone: string, is_partner: boolean) {
+    return this.userModel.findOne({
+      where: {
+        phone_number: phone,
+        is_partner,
+      },
     });
   }
 
@@ -61,6 +85,27 @@ export class UsersService {
     }
 
     await user.destroy();
+
+    return true;
+  }
+
+  public async sendCode({ phone, is_partner }: SendCodeInput) {
+    const user = await this.userModel.findOne({
+      where: {
+        phone_number: phone,
+        is_partner,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    user.code = Math.floor(
+      Math.pow(10, 6 - 1) + Math.random() * 9 * Math.pow(10, 6 - 1),
+    );
+
+    await user.save();
 
     return true;
   }

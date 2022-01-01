@@ -9,4 +9,7 @@ export class CreateUserInput {
 
   @Field()
   phone_number: string;
+
+  @Field(() => Boolean)
+  is_partner: boolean;
 }

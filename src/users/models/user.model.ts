@@ -5,6 +5,7 @@ import { ExtraAddress } from '../../extra-address/models/extra.address.model';
 type CreateAttr = {
   phone_number: string;
   name: string;
+  is_partner: boolean;
 };
 
 @ObjectType()
