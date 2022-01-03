@@ -4,7 +4,8 @@ import { User } from './models/user.model';
 import { UpdateUserInput, SendCodeInput } from './dto/inputs';
 import { ExtraAddress } from '../extra-address/models/extra.address.model';
 import * as bcrypt from 'bcryptjs';
-import { Institution } from '../institutions/models/institution.model';
+import { Institution, WorkDay } from '../institutions/models';
+import { Dish } from '../dishes/models/dish.model';
 
 @Injectable()
 export class UsersService {
@@ -12,7 +13,13 @@ export class UsersService {
 
   public async finUserById(pk: number) {
     return this.userModel.findByPk(pk, {
-      include: [Institution, ExtraAddress],
+      include: [
+        {
+          model: Institution,
+          include: [WorkDay, Dish],
+        },
+        ExtraAddress,
+      ],
     });
   }
 
@@ -22,13 +29,25 @@ export class UsersService {
         phone_number: phone,
         is_partner,
       },
-      include: [Institution, ExtraAddress],
+      include: [
+        {
+          model: Institution,
+          include: [WorkDay, Dish],
+        },
+        ExtraAddress,
+      ],
     });
   }
 
   public async updateUser({ id, ...data }: UpdateUserInput) {
     const user = await this.userModel.findByPk(id, {
-      include: [Institution, ExtraAddress],
+      include: [
+        {
+          model: Institution,
+          include: [WorkDay],
+        },
+        ExtraAddress,
+      ],
     });
 
     if (!user) {

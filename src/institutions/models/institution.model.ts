@@ -9,6 +9,7 @@ import {
 import { User } from '../../users/models/user.model';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { WorkDay } from './work-day.model';
+import { Dish } from '../../dishes/models/dish.model';
 
 type CreateAttr = {
   name: string;
@@ -93,5 +94,14 @@ export class Institution extends Model<CreateAttr> {
   @HasMany(() => WorkDay, {
     onDelete: 'CASCADE',
   })
-  work_days: typeof WorkDay[];
+  work_days: WorkDay[];
+
+  @Field(() => [Dish], {
+    nullable: true,
+    defaultValue: [],
+  })
+  @HasMany(() => Dish, {
+    onDelete: 'CASCADE',
+  })
+  dishes: Dish[];
 }

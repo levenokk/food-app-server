@@ -11,6 +11,7 @@ import {
 } from './dto/inputs';
 import { UsersService } from '../users/users.service';
 import { WorkDay, Institution } from './models';
+import { Dish } from '../dishes/models/dish.model';
 
 @Injectable()
 export class InstitutionsService {
@@ -33,19 +34,15 @@ export class InstitutionsService {
       };
     }
 
-    const test = await this.institutionModel.findAll({
+    return this.institutionModel.findAll({
       ...options,
-      include: [WorkDay],
+      include: [WorkDay, Dish],
     });
-
-    console.log(test);
-
-    return test;
   }
 
   public async getInstitution(pk: number) {
     return this.institutionModel.findByPk(pk, {
-      include: [WorkDay],
+      include: [WorkDay, Dish],
     });
   }
 
@@ -83,6 +80,8 @@ export class InstitutionsService {
     if (!institution) {
       throw new NotFoundException();
     }
+
+    // todo: исправить редактиования рабочих дней
 
     await institution.update(data);
 
