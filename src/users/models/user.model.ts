@@ -96,6 +96,12 @@ export class User extends Model<CreateAttr> {
   })
   is_new: boolean;
 
-  @HasOne(() => Institution)
-  institution: any;
+  @Field(() => Institution, {
+    defaultValue: null,
+    nullable: true,
+  })
+  @HasOne(() => Institution, {
+    onDelete: 'CASCADE',
+  })
+  institution: Institution;
 }

@@ -1,11 +1,7 @@
 import { Args, Resolver, Query, ID, Mutation } from '@nestjs/graphql';
 import { Institution } from './models/institution.model';
 import { InstitutionsService } from './institutions.service';
-import {
-  GetInstitutionsInput,
-  UpdateInstitutionsInput,
-  CreateInstitutionsInput,
-} from './dto/inputs';
+import { GetInstitutionsInput, UpdateInstitutionsInput, CreateInstitutionsInput } from './dto/inputs';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/currentUser';

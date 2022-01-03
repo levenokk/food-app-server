@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadGatewayException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Institution } from './models/institution.model';
 import {
@@ -6,11 +10,13 @@ import {
   UpdateInstitutionsInput,
   CreateInstitutionsInput,
 } from './dto/inputs';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class InstitutionsService {
   constructor(
     @InjectModel(Institution) private institutionModel: typeof Institution,
+    private usersService: UsersService,
   ) {}
 
   public async getInstitutions({
@@ -34,6 +40,12 @@ export class InstitutionsService {
   public async createInstitutions(
     data: CreateInstitutionsInput & { user_id: number },
   ) {
+    const user = await this.usersService.finUserById(data.user_id);
+
+    if (!user.is_partner) {
+      throw new BadGatewayException();
+    }
+
     return this.institutionModel.create(data);
   }
 
@@ -57,6 +69,12 @@ export class InstitutionsService {
   }
 
   public async removeInstitution(user_id: number) {
+    const user = await this.usersService.finUserById(user_id);
+
+    if (!user.is_partner) {
+      throw new BadGatewayException();
+    }
+
     const institution = await this.institutionModel.findOne({
       where: {
         user_id,

@@ -70,7 +70,7 @@ export class Institution extends Model<CreateAttr> {
 
   @Field(() => Number)
   @Column({
-    type: DataType.NUMBER({
+    type: DataType.INTEGER({
       decimals: 5,
     }),
   })
@@ -78,7 +78,7 @@ export class Institution extends Model<CreateAttr> {
 
   @Field(() => Number)
   @Column({
-    type: DataType.NUMBER({
+    type: DataType.INTEGER({
       decimals: 5,
     }),
   })

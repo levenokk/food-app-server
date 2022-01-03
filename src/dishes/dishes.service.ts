@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Dish } from './models/dish.model';
-import { CreateDishInput, GetDishesInput } from './dto/inputs';
-import { UpdateDishInput } from './dto/inputs/update-dish.input';
+import { CreateDishInput, GetDishesInput, UpdateDishInput } from './dto/inputs';
 
 @Injectable()
 export class DishesService {
