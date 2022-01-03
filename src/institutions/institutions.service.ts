@@ -25,14 +25,22 @@ export class InstitutionsService {
     search,
     limit,
   }: GetInstitutionsInput) {
-    return this.institutionModel.findAll({
-      offset,
-      limit,
-      where: {
+    const options: any = { offset, limit };
+
+    if (search) {
+      options.where = {
         name: search,
-      },
+      };
+    }
+
+    const test = await this.institutionModel.findAll({
+      ...options,
       include: [WorkDay],
     });
+
+    console.log(test);
+
+    return test;
   }
 
   public async getInstitution(pk: number) {
@@ -53,7 +61,7 @@ export class InstitutionsService {
 
     const institution = await this.institutionModel.create(data);
     const days = work_days.map((day) => ({
-      day,
+      day: day,
       institution_id: institution.id,
     }));
 

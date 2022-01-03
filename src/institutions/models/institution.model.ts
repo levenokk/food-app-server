@@ -86,7 +86,12 @@ export class Institution extends Model<CreateAttr> {
   })
   free_delivery: number;
 
-  @Field(() => [WorkDay])
-  @HasMany(() => WorkDay)
-  work_days: WorkDay[];
+  @Field(() => [WorkDay], {
+    nullable: true,
+    defaultValue: [],
+  })
+  @HasMany(() => WorkDay, {
+    onDelete: 'CASCADE',
+  })
+  work_days: typeof WorkDay[];
 }

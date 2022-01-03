@@ -24,16 +24,6 @@ export class CreateInstitutionsInput {
   @Field(() => Number)
   free_delivery: number;
 
-  @Field(() => [Day], {
-    description: 'MONDAY TUESDAY WEDNESDAY THURSDAY FRIDAY SATURDAY SUNDAY',
-  })
-  work_days: Array<
-    | 'MONDAY'
-    | 'TUESDAY'
-    | 'WEDNESDAY'
-    | 'THURSDAY'
-    | 'FRIDAY'
-    | 'SATURDAY'
-    | 'SUNDAY'
-  >;
+  @Field(() => [Day])
+  work_days: Day[];
 }

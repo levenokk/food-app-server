@@ -8,12 +8,16 @@ export class DishesService {
   constructor(@InjectModel(Dish) private dishModel: typeof Dish) {}
 
   public async getDishes({ search, offset, limit }: GetDishesInput) {
-    return this.dishModel.findAll({
-      offset,
-      limit,
-      where: {
+    const options: any = { offset, limit };
+
+    if (search) {
+      options.where = {
         name: search,
-      },
+      };
+    }
+
+    return this.dishModel.findAll({
+      ...options,
     });
   }
 

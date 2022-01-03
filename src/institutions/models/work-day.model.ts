@@ -9,13 +9,13 @@ import { Institution } from './institution.model';
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 export enum Day {
-  MONDAY,
-  TUESDAY,
-  WEDNESDAY,
-  THURSDAY,
-  FRIDAY,
-  SATURDAY,
-  SUNDAY,
+  MONDAY = 'MONDAY',
+  TUESDAY = 'TUESDAY',
+  WEDNESDAY = 'WEDNESDAY',
+  THURSDAY = 'THURSDAY',
+  FRIDAY = 'FRIDAY',
+  SATURDAY = 'SATURDAY',
+  SUNDAY = 'SUNDAY',
 }
 
 registerEnumType(Day, {
@@ -48,7 +48,7 @@ export class WorkDay extends Model<CreateAttrs> {
   })
   id: number;
 
-  @Field(() => [Day])
+  @Field(() => Day)
   @Column({
     type: DataType.ENUM(
       'MONDAY',
