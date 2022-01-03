@@ -53,7 +53,7 @@ export class InstitutionsResolver {
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => Institution)
+  @Mutation(() => Boolean)
   public async removeInstitution(@CurrentUser() user: User) {
     return this.institutionsService.removeInstitution(user.id);
   }

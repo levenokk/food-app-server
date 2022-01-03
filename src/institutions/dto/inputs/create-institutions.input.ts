@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { Day } from '../../models';
 
 @InputType()
 export class CreateInstitutionsInput {
@@ -22,4 +23,17 @@ export class CreateInstitutionsInput {
 
   @Field(() => Number)
   free_delivery: number;
+
+  @Field(() => [Day], {
+    description: 'MONDAY TUESDAY WEDNESDAY THURSDAY FRIDAY SATURDAY SUNDAY',
+  })
+  work_days: Array<
+    | 'MONDAY'
+    | 'TUESDAY'
+    | 'WEDNESDAY'
+    | 'THURSDAY'
+    | 'FRIDAY'
+    | 'SATURDAY'
+    | 'SUNDAY'
+  >;
 }

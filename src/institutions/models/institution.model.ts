@@ -2,11 +2,13 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
 import { User } from '../../users/models/user.model';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { WorkDay } from './work-day.model';
 
 type CreateAttr = {
   name: string;
@@ -83,4 +85,8 @@ export class Institution extends Model<CreateAttr> {
     }),
   })
   free_delivery: number;
+
+  @Field(() => [WorkDay])
+  @HasMany(() => WorkDay)
+  work_days: WorkDay[];
 }

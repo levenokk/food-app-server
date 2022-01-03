@@ -4,18 +4,19 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Institution } from './models/institution.model';
 import {
   GetInstitutionsInput,
   UpdateInstitutionsInput,
   CreateInstitutionsInput,
 } from './dto/inputs';
 import { UsersService } from '../users/users.service';
+import { WorkDay, Institution } from './models';
 
 @Injectable()
 export class InstitutionsService {
   constructor(
     @InjectModel(Institution) private institutionModel: typeof Institution,
+    @InjectModel(WorkDay) private workDayModel: typeof WorkDay,
     private usersService: UsersService,
   ) {}
 
@@ -30,23 +31,35 @@ export class InstitutionsService {
       where: {
         name: search,
       },
+      include: [WorkDay],
     });
   }
 
   public async getInstitution(pk: number) {
-    return this.institutionModel.findByPk(pk);
+    return this.institutionModel.findByPk(pk, {
+      include: [WorkDay],
+    });
   }
 
-  public async createInstitutions(
-    data: CreateInstitutionsInput & { user_id: number },
-  ) {
+  public async createInstitutions({
+    work_days,
+    ...data
+  }: CreateInstitutionsInput & { user_id: number }) {
     const user = await this.usersService.finUserById(data.user_id);
 
     if (!user.is_partner) {
       throw new BadGatewayException();
     }
 
-    return this.institutionModel.create(data);
+    const institution = await this.institutionModel.create(data);
+    const days = work_days.map((day) => ({
+      day,
+      institution_id: institution.id,
+    }));
+
+    await this.workDayModel.bulkCreate(days);
+
+    return institution;
   }
 
   public async updateInstitution({
