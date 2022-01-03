@@ -7,6 +7,7 @@ import { ExtraAddressModule } from './extra-address/extra-address.module';
 import { AuthModule } from './auth/auth.module';
 import { DishesModule } from './dishes/dishes.module';
 import { InstitutionsModule } from './institutions/institutions.module';
+import { TagsModule } from './tags/tags.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { InstitutionsModule } from './institutions/institutions.module';
     AuthModule,
     DishesModule,
     InstitutionsModule,
+    TagsModule,
   ],
 })
 export class AppModule {}

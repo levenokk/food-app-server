@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, ID, InputType } from '@nestjs/graphql';
 import { Day } from '../../models';
 
 @InputType()
@@ -26,4 +26,9 @@ export class CreateInstitutionsInput {
 
   @Field(() => [Day])
   work_days: Day[];
+
+  @Field(() => [ID], {
+    description: 'Tags ids',
+  })
+  tags: number[];
 }

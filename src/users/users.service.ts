@@ -6,6 +6,7 @@ import { ExtraAddress } from '../extra-address/models/extra.address.model';
 import * as bcrypt from 'bcryptjs';
 import { Institution, WorkDay } from '../institutions/models';
 import { Dish } from '../dishes/models/dish.model';
+import { Tag } from '../tags/models';
 
 @Injectable()
 export class UsersService {
@@ -16,7 +17,7 @@ export class UsersService {
       include: [
         {
           model: Institution,
-          include: [WorkDay, Dish],
+          include: [WorkDay, Dish, Tag],
         },
         ExtraAddress,
       ],
@@ -32,7 +33,7 @@ export class UsersService {
       include: [
         {
           model: Institution,
-          include: [WorkDay, Dish],
+          include: [WorkDay, Dish, Tag],
         },
         ExtraAddress,
       ],
@@ -44,7 +45,7 @@ export class UsersService {
       include: [
         {
           model: Institution,
-          include: [WorkDay],
+          include: [WorkDay, Dish, Tag],
         },
         ExtraAddress,
       ],

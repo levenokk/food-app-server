@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { Day } from '../../models';
 
 @InputType()
 export class UpdateInstitutionsInput {
@@ -36,4 +37,16 @@ export class UpdateInstitutionsInput {
     nullable: true,
   })
   free_delivery: number;
+
+  @Field(() => [Number], {
+    nullable: true,
+    description: 'Tags ids',
+  })
+  tags: number[];
+
+  @Field(() => [Day], {
+    nullable: true,
+    defaultValue: null,
+  })
+  work_days: Day[];
 }

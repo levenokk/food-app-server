@@ -1,4 +1,5 @@
 import {
+  BelongsToMany,
   Column,
   DataType,
   ForeignKey,
@@ -10,6 +11,7 @@ import { User } from '../../users/models/user.model';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { WorkDay } from './work-day.model';
 import { Dish } from '../../dishes/models/dish.model';
+import { InstitutionsTag, Tag } from '../../tags/models';
 
 type CreateAttr = {
   name: string;
@@ -104,4 +106,8 @@ export class Institution extends Model<CreateAttr> {
     onDelete: 'CASCADE',
   })
   dishes: Dish[];
+
+  @Field(() => [Tag])
+  @BelongsToMany(() => Tag, () => InstitutionsTag)
+  tags: Tag[];
 }

@@ -12,6 +12,7 @@ import {
 import { UsersService } from '../users/users.service';
 import { WorkDay, Institution } from './models';
 import { Dish } from '../dishes/models/dish.model';
+import { Tag } from '../tags/models';
 
 @Injectable()
 export class InstitutionsService {
@@ -36,18 +37,19 @@ export class InstitutionsService {
 
     return this.institutionModel.findAll({
       ...options,
-      include: [WorkDay, Dish],
+      include: [WorkDay, Dish, Tag],
     });
   }
 
   public async getInstitution(pk: number) {
     return this.institutionModel.findByPk(pk, {
-      include: [WorkDay, Dish],
+      include: [WorkDay, Dish, Tag],
     });
   }
 
   public async createInstitutions({
     work_days,
+    tags,
     ...data
   }: CreateInstitutionsInput & { user_id: number }) {
     const user = await this.usersService.finUserById(data.user_id);
@@ -56,12 +58,15 @@ export class InstitutionsService {
       throw new BadGatewayException();
     }
 
-    const institution = await this.institutionModel.create(data);
+    const institution = await this.institutionModel.create(data, {
+      include: [WorkDay, Dish, Tag],
+    });
     const days = work_days.map((day) => ({
       day: day,
       institution_id: institution.id,
     }));
 
+    await institution.$set('tags', tags);
     await this.workDayModel.bulkCreate(days);
 
     return institution;
@@ -69,21 +74,38 @@ export class InstitutionsService {
 
   public async updateInstitution({
     user_id,
+    tags,
+    work_days,
     ...data
   }: UpdateInstitutionsInput & { user_id: number }) {
     const institution = await this.institutionModel.findOne({
       where: {
         user_id: user_id,
       },
+      include: [WorkDay, Dish, Tag],
     });
 
     if (!institution) {
       throw new NotFoundException();
     }
 
-    // todo: исправить редактиования рабочих дней
+    if (work_days) {
+      await this.workDayModel.destroy({
+        where: {
+          institution_id: institution.id,
+        },
+      });
+
+      const days = work_days.map((day) => ({
+        day: day,
+        institution_id: institution.id,
+      }));
+
+      await this.workDayModel.bulkCreate(days);
+    }
 
     await institution.update(data);
+    await institution.$set('tags', tags);
 
     return institution;
   }
