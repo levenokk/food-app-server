@@ -14,7 +14,7 @@ export class AuthService {
   async validateUser(phone: string, code: number, is_partner: boolean) {
     const user = await this.usersService.findUserByPhone(phone, is_partner);
 
-    if (!user.code) {
+    if (!user || !user.code) {
       throw new BadRequestException('Invalid code');
     }
 

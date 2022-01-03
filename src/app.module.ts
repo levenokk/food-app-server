@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ExtraAddressModule } from './extra-address/extra-address.module';
 import { AuthModule } from './auth/auth.module';
+import { DishesModule } from './dishes/dishes.module';
+import { InstitutionsModule } from './institutions/institutions.module';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import { AuthModule } from './auth/auth.module';
     UsersModule,
     ExtraAddressModule,
     AuthModule,
+    DishesModule,
+    InstitutionsModule,
   ],
 })
 export class AppModule {}

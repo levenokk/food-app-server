@@ -1,6 +1,14 @@
-import { Column, Model, Table, DataType, HasMany } from 'sequelize-typescript';
+import {
+  Column,
+  Model,
+  Table,
+  DataType,
+  HasMany,
+  HasOne,
+} from 'sequelize-typescript';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { ExtraAddress } from '../../extra-address/models/extra.address.model';
+import { Institution } from '../../institutions/models/institution.model';
 
 type CreateAttr = {
   phone_number: string;
@@ -87,4 +95,7 @@ export class User extends Model<CreateAttr> {
     defaultValue: true,
   })
   is_new: boolean;
+
+  @HasOne(() => Institution)
+  institution: any;
 }
