@@ -11,7 +11,7 @@ import { User } from '../../users/models/user.model';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { WorkDay } from './work-day.model';
 import { Dish } from '../../dishes/models/dish.model';
-import { InstitutionsTag, Tag } from '../../tags/models';
+import { InstitutionTag, Tag } from '../../tags/models';
 import { InstitutionExtraAddress } from '../../extra-address/models';
 import { InstitutionPayMethod } from './pay-method.model';
 import { Filling } from '../../fillings/models/filling.model';
@@ -111,7 +111,7 @@ export class Institution extends Model<CreateAttr> {
   dishes: Dish[];
 
   @Field(() => [Tag])
-  @BelongsToMany(() => Tag, () => InstitutionsTag)
+  @BelongsToMany(() => Tag, () => InstitutionTag)
   tags: Tag[];
 
   @Field(() => [InstitutionExtraAddress], {

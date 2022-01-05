@@ -11,6 +11,7 @@ import {
 } from '../institutions/models';
 import { Dish } from '../dishes/models/dish.model';
 import { Tag } from '../tags/models';
+import { Filling } from '../fillings/models/filling.model';
 
 @Injectable()
 export class UsersService {
@@ -21,7 +22,7 @@ export class UsersService {
       include: [
         {
           model: Institution,
-          include: [WorkDay, Dish, Tag, InstitutionPayMethod],
+          include: [WorkDay, Dish, Tag, InstitutionPayMethod, Filling],
         },
         UserExtraAddress,
       ],
@@ -37,7 +38,7 @@ export class UsersService {
       include: [
         {
           model: Institution,
-          include: [WorkDay, Dish, Tag, InstitutionPayMethod],
+          include: [WorkDay, Dish, Tag, InstitutionPayMethod, Filling],
         },
         UserExtraAddress,
       ],
@@ -49,7 +50,7 @@ export class UsersService {
       include: [
         {
           model: Institution,
-          include: [WorkDay, Dish, Tag, InstitutionPayMethod],
+          include: [WorkDay, Dish, Tag, InstitutionPayMethod, Filling],
         },
         UserExtraAddress,
       ],

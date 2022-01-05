@@ -7,7 +7,13 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Dish } from './models/dish.model';
 import { CreateDishInput, GetDishesInput, UpdateDishInput } from './dto/inputs';
 import { UsersService } from '../users/users.service';
-import { Institution } from '../institutions/models';
+import {
+  Institution,
+  InstitutionPayMethod,
+  WorkDay,
+} from '../institutions/models';
+import { Tag } from '../tags/models';
+import { Filling } from '../fillings/models/filling.model';
 
 @Injectable()
 export class DishesService {
@@ -27,18 +33,29 @@ export class DishesService {
 
     return this.dishModel.findAll({
       ...options,
-      include: [Institution],
+      include: [
+        {
+          model: Institution,
+          include: [WorkDay, Dish, Tag, InstitutionPayMethod, Filling, Tag],
+        },
+      ],
     });
   }
 
   public async getDish(pk: number) {
     return this.dishModel.findByPk(pk, {
-      include: [Institution],
+      include: [
+        {
+          model: Institution,
+          include: [WorkDay, Dish, Tag, InstitutionPayMethod, Filling, Tag],
+        },
+      ],
     });
   }
 
   public async createDish({
     user_id,
+    tag_ids,
     ...data
   }: CreateDishInput & { user_id: number }) {
     const user = await this.usersService.finUserById(user_id);
@@ -47,10 +64,14 @@ export class DishesService {
       throw new BadGatewayException();
     }
 
-    return this.dishModel.create({
+    const dish = await this.dishModel.create({
       ...data,
       institution_id: user.institution.id,
     });
+
+    await dish.$set('tags', tag_ids);
+
+    return dish;
   }
 
   public async updateDish({

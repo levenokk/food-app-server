@@ -1,2 +1,2 @@
-export * from './institutions-tag.model';
+export * from './institution-tag.model';
 export * from './tag.model';

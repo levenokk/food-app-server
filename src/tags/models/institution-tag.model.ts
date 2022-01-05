@@ -3,11 +3,11 @@ import { Tag } from './tag.model';
 import { Institution } from '../../institutions/models';
 
 @Table({
-  tableName: 'institutions_tags',
+  tableName: 'institution_tags',
   createdAt: false,
   updatedAt: false,
 })
-export class InstitutionsTag extends Model {
+export class InstitutionTag extends Model {
   @ForeignKey(() => Tag)
   tag_id: number;
 

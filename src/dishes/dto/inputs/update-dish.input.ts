@@ -1,4 +1,4 @@
-import { Field, Float, ID, InputType } from '@nestjs/graphql';
+import { Field, Float, ID, InputType, Int } from '@nestjs/graphql';
 
 @InputType()
 export class UpdateDishInput {
@@ -34,4 +34,10 @@ export class UpdateDishInput {
     nullable: true,
   })
   composition: string;
+
+  @Field(() => [Int], {
+    nullable: true,
+    defaultValue: [],
+  })
+  tag_ids: number[];
 }

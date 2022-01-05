@@ -1,7 +1,9 @@
 import { BelongsToMany, Column, Model, Table } from 'sequelize-typescript';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Institution } from '../../institutions/models';
-import { InstitutionsTag } from './institutions-tag.model';
+import { InstitutionTag } from './institution-tag.model';
+import { Dish } from "../../dishes/models/dish.model";
+import { DishTag } from "./dish-tag.model";
 
 type CreateAttr = {
   name: string;
@@ -27,6 +29,9 @@ export class Tag extends Model<CreateAttr> {
   })
   name: string;
 
-  @BelongsToMany(() => Institution, () => InstitutionsTag)
+  @BelongsToMany(() => Institution, () => InstitutionTag)
   institutions: Institution[];
+
+  @BelongsToMany(() => Dish, () => DishTag)
+  dishes: Dish[];
 }

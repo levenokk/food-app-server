@@ -20,7 +20,7 @@ export class FillingsResolver {
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => [Filling], {
+  @Mutation(() => Filling, {
     defaultValue: [],
   })
   public async createInstitutionFillings(

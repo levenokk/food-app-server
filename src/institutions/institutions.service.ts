@@ -13,6 +13,7 @@ import { UsersService } from '../users/users.service';
 import { WorkDay, Institution, InstitutionPayMethod } from './models';
 import { Dish } from '../dishes/models/dish.model';
 import { Tag } from '../tags/models';
+import { Filling } from '../fillings/models/filling.model';
 
 @Injectable()
 export class InstitutionsService {
@@ -39,13 +40,31 @@ export class InstitutionsService {
 
     return this.institutionModel.findAll({
       ...options,
-      include: [WorkDay, Dish, Tag, InstitutionPayMethod],
+      include: [
+        WorkDay,
+        {
+          include: [Tag],
+          model: Dish,
+        },
+        Tag,
+        InstitutionPayMethod,
+        Filling,
+      ],
     });
   }
 
   public async getInstitution(pk: number) {
     return this.institutionModel.findByPk(pk, {
-      include: [WorkDay, Dish, Tag],
+      include: [
+        WorkDay,
+        {
+          include: [Tag],
+          model: Dish,
+        },
+        Tag,
+        InstitutionPayMethod,
+        Filling,
+      ],
     });
   }
 
@@ -62,7 +81,16 @@ export class InstitutionsService {
     }
 
     const institution = await this.institutionModel.create(data, {
-      include: [WorkDay, Dish, Tag, InstitutionPayMethod],
+      include: [
+        WorkDay,
+        {
+          include: [Tag],
+          model: Dish,
+        },
+        Tag,
+        InstitutionPayMethod,
+        Filling,
+      ],
     });
     const days = work_days.map((day) => ({
       day: day,
@@ -93,7 +121,16 @@ export class InstitutionsService {
       where: {
         user_id: user_id,
       },
-      include: [WorkDay, Dish, Tag, InstitutionPayMethod],
+      include: [
+        WorkDay,
+        {
+          include: [Tag],
+          model: Dish,
+        },
+        Tag,
+        InstitutionPayMethod,
+        Filling,
+      ],
     });
 
     if (!institution) {
