@@ -10,7 +10,7 @@ import {
   CreateInstitutionsInput,
 } from './dto/inputs';
 import { UsersService } from '../users/users.service';
-import { WorkDay, Institution } from './models';
+import { WorkDay, Institution, InstitutionPayMethod } from './models';
 import { Dish } from '../dishes/models/dish.model';
 import { Tag } from '../tags/models';
 
@@ -19,6 +19,8 @@ export class InstitutionsService {
   constructor(
     @InjectModel(Institution) private institutionModel: typeof Institution,
     @InjectModel(WorkDay) private workDayModel: typeof WorkDay,
+    @InjectModel(InstitutionPayMethod)
+    private institutionPayMethodModel: typeof InstitutionPayMethod,
     private usersService: UsersService,
   ) {}
 
@@ -50,6 +52,7 @@ export class InstitutionsService {
   public async createInstitutions({
     work_days,
     tags,
+    pay_methods,
     ...data
   }: CreateInstitutionsInput & { user_id: number }) {
     const user = await this.usersService.finUserById(data.user_id);
@@ -69,6 +72,13 @@ export class InstitutionsService {
     await institution.$set('tags', tags);
     await this.workDayModel.bulkCreate(days);
 
+    const institutionPayMethods = pay_methods.map((method) => ({
+      method,
+      institution_id: institution.id,
+    }));
+
+    await this.institutionPayMethodModel.bulkCreate(institutionPayMethods);
+
     return institution;
   }
 
@@ -76,6 +86,7 @@ export class InstitutionsService {
     user_id,
     tags,
     work_days,
+    pay_methods,
     ...data
   }: UpdateInstitutionsInput & { user_id: number }) {
     const institution = await this.institutionModel.findOne({
@@ -97,11 +108,26 @@ export class InstitutionsService {
       });
 
       const days = work_days.map((day) => ({
-        day: day,
+        day,
         institution_id: institution.id,
       }));
 
       await this.workDayModel.bulkCreate(days);
+    }
+
+    if (pay_methods) {
+      await this.institutionPayMethodModel.destroy({
+        where: {
+          institution_id: institution.id,
+        },
+      });
+
+      const institutionPayMethods = pay_methods.map((method) => ({
+        method,
+        institution_id: institution.id,
+      }));
+
+      await this.institutionPayMethodModel.bulkCreate(institutionPayMethods);
     }
 
     await institution.update(data);

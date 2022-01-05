@@ -13,6 +13,7 @@ import { WorkDay } from './work-day.model';
 import { Dish } from '../../dishes/models/dish.model';
 import { InstitutionsTag, Tag } from '../../tags/models';
 import { InstitutionExtraAddress } from '../../extra-address/models';
+import { InstitutionPayMethod } from './pay-method.model';
 
 type CreateAttr = {
   name: string;
@@ -120,4 +121,13 @@ export class Institution extends Model<CreateAttr> {
     onDelete: 'CASCADE',
   })
   extra_addresses: typeof InstitutionExtraAddress[];
+
+  @Field(() => [InstitutionPayMethod], {
+    nullable: true,
+    defaultValue: [],
+  })
+  @HasMany(() => InstitutionPayMethod, {
+    onDelete: 'CASCADE',
+  })
+  pay_methods: typeof InstitutionPayMethod[];
 }
