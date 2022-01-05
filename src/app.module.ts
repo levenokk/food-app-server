@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { DishesModule } from './dishes/dishes.module';
 import { InstitutionsModule } from './institutions/institutions.module';
 import { TagsModule } from './tags/tags.module';
+import { FillingsModule } from './fillings/fillings.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { TagsModule } from './tags/tags.module';
     DishesModule,
     InstitutionsModule,
     TagsModule,
+    FillingsModule,
   ],
 })
 export class AppModule {}

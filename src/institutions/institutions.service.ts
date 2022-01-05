@@ -39,7 +39,7 @@ export class InstitutionsService {
 
     return this.institutionModel.findAll({
       ...options,
-      include: [WorkDay, Dish, Tag],
+      include: [WorkDay, Dish, Tag, InstitutionPayMethod],
     });
   }
 
@@ -62,7 +62,7 @@ export class InstitutionsService {
     }
 
     const institution = await this.institutionModel.create(data, {
-      include: [WorkDay, Dish, Tag],
+      include: [WorkDay, Dish, Tag, InstitutionPayMethod],
     });
     const days = work_days.map((day) => ({
       day: day,
@@ -93,7 +93,7 @@ export class InstitutionsService {
       where: {
         user_id: user_id,
       },
-      include: [WorkDay, Dish, Tag],
+      include: [WorkDay, Dish, Tag, InstitutionPayMethod],
     });
 
     if (!institution) {
