@@ -14,6 +14,7 @@ import { Dish } from '../../dishes/models/dish.model';
 import { InstitutionsTag, Tag } from '../../tags/models';
 import { InstitutionExtraAddress } from '../../extra-address/models';
 import { InstitutionPayMethod } from './pay-method.model';
+import { Filling } from '../../fillings/models/filling.model';
 
 type CreateAttr = {
   name: string;
@@ -130,4 +131,8 @@ export class Institution extends Model<CreateAttr> {
     onDelete: 'CASCADE',
   })
   pay_methods: typeof InstitutionPayMethod[];
+
+  @Field(() => [Filling])
+  @HasMany(() => Filling)
+  fillings: Filling[];
 }
