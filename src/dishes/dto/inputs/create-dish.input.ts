@@ -22,4 +22,7 @@ export class CreateDishInput {
 
   @Field(() => [Int])
   tag_ids: number[];
+
+  @Field(() => [Int])
+  filling_ids: number[];
 }

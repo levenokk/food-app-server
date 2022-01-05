@@ -1,7 +1,7 @@
 import { Args, Resolver, Query, Mutation } from '@nestjs/graphql';
 import { FillingsService } from './fillings.service';
 import { GetFillingsInput } from './dto/inputs/get-fillings.input';
-import { Filling } from './models/filling.model';
+import { Filling } from './models';
 import { CreateFillingInput } from './dto/inputs/create-filling.input';
 import { CurrentUser } from '../auth/decorators/currentUser';
 import { User } from '../users/models/user.model';

@@ -11,6 +11,7 @@ import { Field, Float, ID, ObjectType } from '@nestjs/graphql';
 import { Institution } from '../../institutions/models';
 import { Tag } from '../../tags/models';
 import { DishTag } from '../../tags/models/dish-tag.model';
+import { DishFilling, Filling } from '../../fillings/models';
 
 type CreateAttr = {
   name: string;
@@ -80,4 +81,8 @@ export class Dish extends Model<CreateAttr> {
   @Field(() => [Tag])
   @BelongsToMany(() => Tag, () => DishTag)
   tags: Tag[];
+
+  @Field(() => [Filling])
+  @BelongsToMany(() => Filling, () => DishFilling)
+  fillings: Filling[];
 }

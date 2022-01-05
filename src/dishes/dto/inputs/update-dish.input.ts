@@ -40,4 +40,10 @@ export class UpdateDishInput {
     defaultValue: [],
   })
   tag_ids: number[];
+
+  @Field(() => [Int], {
+    nullable: true,
+    defaultValue: [],
+  })
+  filling_ids: number[];
 }

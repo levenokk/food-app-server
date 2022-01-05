@@ -4,6 +4,7 @@ import { Filling } from './models/filling.model';
 import { GetFillingsInput } from './dto/inputs/get-fillings.input';
 import { UsersService } from '../users/users.service';
 import { CreateFillingInput } from './dto/inputs/create-filling.input';
+import { Sequelize } from 'sequelize-typescript';
 
 @Injectable()
 export class FillingsService {
@@ -18,6 +19,14 @@ export class FillingsService {
         institution_id: id,
       },
       ...data,
+    });
+  }
+
+  public getFillingsById(ids: number[]) {
+    return this.fillingModel.findAll({
+      where: Sequelize.or({
+        id: ids,
+      }),
     });
   }
 

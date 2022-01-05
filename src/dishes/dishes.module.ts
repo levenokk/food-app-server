@@ -4,9 +4,10 @@ import { DishesResolver } from './dishes.resolver';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Dish } from './models/dish.model';
 import { UsersModule } from '../users/users.module';
+import { FillingsModule } from '../fillings/fillings.module';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Dish]), UsersModule],
+  imports: [SequelizeModule.forFeature([Dish]), UsersModule, FillingsModule],
   providers: [DishesService, DishesResolver],
 })
 export class DishesModule {}

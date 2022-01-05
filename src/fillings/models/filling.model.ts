@@ -1,4 +1,5 @@
 import {
+  BelongsToMany,
   Column,
   DataType,
   ForeignKey,
@@ -7,6 +8,8 @@ import {
 } from 'sequelize-typescript';
 import { Institution } from '../../institutions/models';
 import { Field, Float, ID, ObjectType } from '@nestjs/graphql';
+import { Dish } from '../../dishes/models/dish.model';
+import { DishFilling } from './dish-filling.model';
 
 type CreateAttrs = {
   name: string;
@@ -52,4 +55,8 @@ export class Filling extends Model<CreateAttrs> {
 
   @ForeignKey(() => Institution)
   institution_id: number;
+
+  @Field(() => [Dish])
+  @BelongsToMany(() => Dish, () => DishFilling)
+  dishes: Dish[];
 }
