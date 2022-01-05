@@ -1,20 +1,20 @@
 import { Column, ForeignKey, Model, Table } from 'sequelize-typescript';
-import { User } from '../../users/models/user.model';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Institution } from '../../institutions/models';
 
 type CreateAttr = {
   latitude: string;
   longitude: string;
-  user_id: number;
+  institution_id: number;
 };
 
 @ObjectType()
 @Table({
-  tableName: 'extra_addresses',
+  tableName: 'institution_extra_addresses',
   updatedAt: false,
   createdAt: false,
 })
-export class ExtraAddress extends Model<CreateAttr> {
+export class InstitutionExtraAddress extends Model<CreateAttr> {
   @Field(() => ID)
   @Column({
     primaryKey: true,
@@ -31,7 +31,7 @@ export class ExtraAddress extends Model<CreateAttr> {
   @Column
   longitude: string;
 
-  @ForeignKey(() => User)
+  @ForeignKey(() => Institution)
   @Column
-  user_id: number;
+  institution_id: number;
 }

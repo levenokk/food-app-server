@@ -12,6 +12,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { WorkDay } from './work-day.model';
 import { Dish } from '../../dishes/models/dish.model';
 import { InstitutionsTag, Tag } from '../../tags/models';
+import { InstitutionExtraAddress } from '../../extra-address/models';
 
 type CreateAttr = {
   name: string;
@@ -110,4 +111,13 @@ export class Institution extends Model<CreateAttr> {
   @Field(() => [Tag])
   @BelongsToMany(() => Tag, () => InstitutionsTag)
   tags: Tag[];
+
+  @Field(() => [InstitutionExtraAddress], {
+    nullable: true,
+    defaultValue: [],
+  })
+  @HasMany(() => InstitutionExtraAddress, {
+    onDelete: 'CASCADE',
+  })
+  extra_addresses: typeof InstitutionExtraAddress[];
 }

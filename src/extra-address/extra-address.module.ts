@@ -2,10 +2,14 @@ import { Module } from '@nestjs/common';
 import { ExtraAddressResolver } from './extra-address.resolver';
 import { ExtraAddressService } from './extra-address.service';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { ExtraAddress } from './models/extra.address.model';
+import { UserExtraAddress, InstitutionExtraAddress } from './models';
+import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [SequelizeModule.forFeature([ExtraAddress])],
+  imports: [
+    UsersModule,
+    SequelizeModule.forFeature([UserExtraAddress, InstitutionExtraAddress]),
+  ],
   providers: [ExtraAddressResolver, ExtraAddressService],
 })
 export class ExtraAddressModule {}

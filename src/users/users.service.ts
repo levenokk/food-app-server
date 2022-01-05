@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './models/user.model';
 import { UpdateUserInput, SendCodeInput } from './dto/inputs';
-import { ExtraAddress } from '../extra-address/models/extra.address.model';
+import { UserExtraAddress } from '../extra-address/models/user-extra-address.model';
 import * as bcrypt from 'bcryptjs';
 import { Institution, WorkDay } from '../institutions/models';
 import { Dish } from '../dishes/models/dish.model';
@@ -19,7 +19,7 @@ export class UsersService {
           model: Institution,
           include: [WorkDay, Dish, Tag],
         },
-        ExtraAddress,
+        UserExtraAddress,
       ],
     });
   }
@@ -35,7 +35,7 @@ export class UsersService {
           model: Institution,
           include: [WorkDay, Dish, Tag],
         },
-        ExtraAddress,
+        UserExtraAddress,
       ],
     });
   }
@@ -47,7 +47,7 @@ export class UsersService {
           model: Institution,
           include: [WorkDay, Dish, Tag],
         },
-        ExtraAddress,
+        UserExtraAddress,
       ],
     });
 

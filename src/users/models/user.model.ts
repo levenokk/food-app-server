@@ -7,8 +7,8 @@ import {
   HasOne,
 } from 'sequelize-typescript';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { ExtraAddress } from '../../extra-address/models/extra.address.model';
-import { Institution } from '../../institutions/models/institution.model';
+import { UserExtraAddress } from '../../extra-address/models/user-extra-address.model';
+import { Institution } from '../../institutions/models';
 
 type CreateAttr = {
   phone_number: string;
@@ -80,14 +80,14 @@ export class User extends Model<CreateAttr> {
   })
   order_notifications: boolean;
 
-  @Field(() => [ExtraAddress], {
+  @Field(() => [UserExtraAddress], {
     nullable: true,
     defaultValue: [],
   })
-  @HasMany(() => ExtraAddress, {
+  @HasMany(() => UserExtraAddress, {
     onDelete: 'CASCADE',
   })
-  extra_addresses: typeof ExtraAddress[];
+  extra_addresses: typeof UserExtraAddress[];
 
   @Field(() => Boolean)
   @Column({
