@@ -9,6 +9,7 @@ import { DishesModule } from './dishes/dishes.module';
 import { InstitutionsModule } from './institutions/institutions.module';
 import { TagsModule } from './tags/tags.module';
 import { FillingsModule } from './fillings/fillings.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { FillingsModule } from './fillings/fillings.module';
     InstitutionsModule,
     TagsModule,
     FillingsModule,
+    OrdersModule,
   ],
 })
 export class AppModule {}

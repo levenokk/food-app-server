@@ -1,6 +1,6 @@
 import { BadGatewayException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Filling } from './models/filling.model';
+import { Filling } from './models';
 import { GetFillingsInput } from './dto/inputs/get-fillings.input';
 import { UsersService } from '../users/users.service';
 import { CreateFillingInput } from './dto/inputs/create-filling.input';

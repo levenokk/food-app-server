@@ -90,7 +90,7 @@ export class DishesService {
 
     await dish.$set('tags', tag_ids);
 
-    return dish;
+    return dish.reload();
   }
 
   public async updateDish({
@@ -142,7 +142,6 @@ export class DishesService {
     await dish.update(data);
 
     return dish.reload();
-    // todo: сделать .reload() везде где есть $set
   }
 
   public async removeDish(pk: number, user_id: number) {

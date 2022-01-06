@@ -14,7 +14,8 @@ import { Dish } from '../../dishes/models/dish.model';
 import { InstitutionTag, Tag } from '../../tags/models';
 import { InstitutionExtraAddress } from '../../extra-address/models';
 import { InstitutionPayMethod } from './pay-method.model';
-import { Filling } from '../../fillings/models/filling.model';
+import { Filling } from '../../fillings/models';
+import { InstitutionOrder } from '../../orders/models';
 
 type CreateAttr = {
   name: string;
@@ -135,4 +136,8 @@ export class Institution extends Model<CreateAttr> {
   @Field(() => [Filling])
   @HasMany(() => Filling)
   fillings: Filling[];
+
+  @Field(() => [InstitutionOrder])
+  @HasMany(() => InstitutionOrder)
+  orders: typeof InstitutionOrder[];
 }

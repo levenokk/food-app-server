@@ -107,7 +107,7 @@ export class InstitutionsService {
 
     await this.institutionPayMethodModel.bulkCreate(institutionPayMethods);
 
-    return institution;
+    return institution.reload();
   }
 
   public async updateInstitution({
@@ -170,7 +170,7 @@ export class InstitutionsService {
     await institution.update(data);
     await institution.$set('tags', tags);
 
-    return institution;
+    return institution.reload();
   }
 
   public async removeInstitution(user_id: number) {
