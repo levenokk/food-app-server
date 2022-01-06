@@ -6,17 +6,28 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import { Field, ID, Int } from '@nestjs/graphql';
+import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
 import { Dish } from '../../dishes/models/dish.model';
 import { InstitutionOrder } from './institution_order.model';
 import { User } from '../../users/models/user.model';
 import { Filling } from '../../fillings/models';
 import { FillingOrder } from './filling_order.model';
 
+type CreateAttr = {
+  quality: number;
+  dish_id: number;
+  institution_order_id: number;
+  user_id: number;
+  price: number;
+  stock_price: number;
+  stock: number;
+};
+
+@ObjectType()
 @Table({
   tableName: 'dish',
 })
-export class DishOrder extends Model {
+export class DishOrder extends Model<CreateAttr> {
   @Field(() => ID)
   @Column({
     primaryKey: true,

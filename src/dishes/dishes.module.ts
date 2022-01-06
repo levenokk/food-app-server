@@ -9,5 +9,6 @@ import { FillingsModule } from '../fillings/fillings.module';
 @Module({
   imports: [SequelizeModule.forFeature([Dish]), UsersModule, FillingsModule],
   providers: [DishesService, DishesResolver],
+  exports: [DishesService],
 })
 export class DishesModule {}

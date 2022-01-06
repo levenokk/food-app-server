@@ -16,6 +16,7 @@ import {
 import { Tag } from '../tags/models';
 import { Filling } from '../fillings/models';
 import { FillingsService } from '../fillings/fillings.service';
+import { Sequelize } from 'sequelize-typescript';
 
 @Injectable()
 export class DishesService {
@@ -24,6 +25,14 @@ export class DishesService {
     private usersService: UsersService,
     private fillingsService: FillingsService,
   ) {}
+
+  public async getDishesById(ids: number[]) {
+    return this.dishModel.findAll({
+      where: Sequelize.or({
+        id: ids,
+      }),
+    });
+  }
 
   public async getDishes({ search, offset, limit }: GetDishesInput) {
     const options: any = { offset, limit };
