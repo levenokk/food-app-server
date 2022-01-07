@@ -1,6 +1,6 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
 
-@ObjectType()
+@InputType()
 export class Order {
   @Field(() => Int)
   quality: number;
@@ -8,12 +8,6 @@ export class Order {
   @Field(() => Int)
   dish_id: number;
 
-  @Field(() => Int)
-  price: number;
-
-  @Field(() => Int)
-  stock_price: number;
-
-  @Field(() => Boolean)
-  stock: number;
+  @Field(() => [Int])
+  filling_ids: number[];
 }

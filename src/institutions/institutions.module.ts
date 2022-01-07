@@ -11,5 +11,6 @@ import { UsersModule } from '../users/users.module';
     UsersModule,
   ],
   providers: [InstitutionsService, InstitutionsResolver],
+  exports: [InstitutionsService],
 })
 export class InstitutionsModule {}

@@ -6,7 +6,7 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 import { Dish } from '../../dishes/models/dish.model';
 import { InstitutionOrder } from './institution_order.model';
 import { User } from '../../users/models/user.model';
@@ -19,13 +19,11 @@ type CreateAttr = {
   institution_order_id: number;
   user_id: number;
   price: number;
-  stock_price: number;
-  stock: number;
 };
 
 @ObjectType()
 @Table({
-  tableName: 'dish',
+  tableName: 'dish_orders',
 })
 export class DishOrder extends Model<CreateAttr> {
   @Field(() => ID)
@@ -56,19 +54,7 @@ export class DishOrder extends Model<CreateAttr> {
   })
   price: number;
 
-  @Field(() => Number)
-  @Column({
-    type: DataType.FLOAT,
-  })
-  stock_price: number;
-
-  @Field(() => Boolean)
-  @Column({
-    type: DataType.BOOLEAN,
-  })
-  stock: boolean;
-
   @Field(() => [Filling])
   @BelongsToMany(() => Filling, () => FillingOrder)
-  filling: Filling[];
+  fillings: Filling[];
 }

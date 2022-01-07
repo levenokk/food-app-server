@@ -4,10 +4,12 @@ import { OrdersResolver } from './orders.resolver';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { DishOrder, FillingOrder, InstitutionOrder } from './models';
 import { DishesModule } from '../dishes/dishes.module';
+import { InstitutionsModule } from '../institutions/institutions.module';
 
 @Module({
   imports: [
     DishesModule,
+    InstitutionsModule,
     SequelizeModule.forFeature([InstitutionOrder, FillingOrder, DishOrder]),
   ],
   providers: [OrdersService, OrdersResolver],

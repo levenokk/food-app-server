@@ -11,7 +11,8 @@ import {
 } from '../institutions/models';
 import { Dish } from '../dishes/models/dish.model';
 import { Tag } from '../tags/models';
-import { Filling } from '../fillings/models/filling.model';
+import { Filling } from '../fillings/models';
+import { InstitutionOrder } from '../orders/models';
 
 @Injectable()
 export class UsersService {
@@ -24,6 +25,7 @@ export class UsersService {
           model: Institution,
           include: [WorkDay, Dish, Tag, InstitutionPayMethod, Filling],
         },
+        InstitutionOrder,
         UserExtraAddress,
       ],
     });

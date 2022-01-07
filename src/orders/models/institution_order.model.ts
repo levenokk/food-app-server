@@ -13,6 +13,17 @@ import { DishOrder } from './dish_order.model';
 
 // todo: переделать поля Number на INT
 
+type CreateAttr = {
+  institution_id: number;
+  user_id: number;
+  status: Status;
+  rating: number;
+  delivery: number;
+  latitude: string;
+  longitude: string;
+  cost: number;
+};
+
 export enum Status {
   NEW = 'NEW',
   CANCELED = 'CANCELED',
@@ -28,9 +39,9 @@ registerEnumType(Status, {
 
 @ObjectType()
 @Table({
-  tableName: 'institutionOrder_orders',
+  tableName: 'institution_orders',
 })
-export class InstitutionOrder extends Model {
+export class InstitutionOrder extends Model<CreateAttr> {
   @Field(() => ID)
   @Column({
     primaryKey: true,
@@ -60,6 +71,7 @@ export class InstitutionOrder extends Model {
   @Field(() => Int)
   @Column({
     type: DataType.INTEGER,
+    defaultValue: 0,
   })
   rating: number;
 
@@ -76,13 +88,6 @@ export class InstitutionOrder extends Model {
   @Field(() => String)
   @Column
   longitude: string;
-
-  @Field(() => Boolean)
-  @Column({
-    type: DataType.BOOLEAN,
-    defaultValue: true,
-  })
-  is_hide: boolean;
 
   @Field(() => [DishOrder])
   @HasMany(() => DishOrder)

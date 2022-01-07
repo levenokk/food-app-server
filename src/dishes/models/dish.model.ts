@@ -4,6 +4,7 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
@@ -12,6 +13,7 @@ import { Institution } from '../../institutions/models';
 import { Tag } from '../../tags/models';
 import { DishTag } from '../../tags/models/dish-tag.model';
 import { DishFilling, Filling } from '../../fillings/models';
+import { DishOrder } from '../../orders/models';
 
 type CreateAttr = {
   name: string;
@@ -85,4 +87,8 @@ export class Dish extends Model<CreateAttr> {
   @Field(() => [Filling])
   @BelongsToMany(() => Filling, () => DishFilling)
   fillings: Filling[];
+
+  @Field(() => [DishOrder])
+  @HasMany(() => DishOrder)
+  dish_orders: DishOrder[];
 }

@@ -31,6 +31,7 @@ export class DishesService {
       where: Sequelize.or({
         id: ids,
       }),
+      include: [Filling],
     });
   }
 

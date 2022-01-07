@@ -13,7 +13,8 @@ import { UsersService } from '../users/users.service';
 import { WorkDay, Institution, InstitutionPayMethod } from './models';
 import { Dish } from '../dishes/models/dish.model';
 import { Tag } from '../tags/models';
-import { Filling } from '../fillings/models/filling.model';
+import { Filling } from '../fillings/models';
+import { Sequelize } from 'sequelize-typescript';
 
 @Injectable()
 export class InstitutionsService {
@@ -24,6 +25,14 @@ export class InstitutionsService {
     private institutionPayMethodModel: typeof InstitutionPayMethod,
     private usersService: UsersService,
   ) {}
+
+  public async getInstitutionsById(ids: number[]) {
+    return this.institutionModel.findAll({
+      where: Sequelize.or({
+        id: ids,
+      }),
+    });
+  }
 
   public async getInstitutions({
     offset,

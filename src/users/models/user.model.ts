@@ -9,6 +9,7 @@ import {
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { UserExtraAddress } from '../../extra-address/models/user-extra-address.model';
 import { Institution } from '../../institutions/models';
+import { InstitutionOrder } from '../../orders/models';
 
 type CreateAttr = {
   phone_number: string;
@@ -104,4 +105,8 @@ export class User extends Model<CreateAttr> {
     onDelete: 'CASCADE',
   })
   institution: Institution;
+
+  @Field(() => [InstitutionOrder])
+  @HasMany(() => InstitutionOrder)
+  orders: InstitutionOrder[];
 }

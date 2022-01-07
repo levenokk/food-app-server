@@ -137,7 +137,6 @@ export class Institution extends Model<CreateAttr> {
   @HasMany(() => Filling)
   fillings: Filling[];
 
-  @Field(() => [InstitutionOrder])
   @HasMany(() => InstitutionOrder)
   orders: typeof InstitutionOrder[];
 }
