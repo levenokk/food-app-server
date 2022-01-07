@@ -1,4 +1,5 @@
 import {
+  BelongsTo,
   Column,
   DataType,
   ForeignKey,
@@ -92,4 +93,8 @@ export class InstitutionOrder extends Model<CreateAttr> {
   @Field(() => [DishOrder])
   @HasMany(() => DishOrder)
   dish_orders: DishOrder[];
+
+  @Field(() => User)
+  @BelongsTo(() => User)
+  user: User;
 }

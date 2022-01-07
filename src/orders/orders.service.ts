@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadGatewayException,
+  BadRequestException,
+  Injectable,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { DishOrder, InstitutionOrder, Status } from './models';
 import { CreateOrderInput } from './dto/inputs';
@@ -6,7 +10,12 @@ import { DishesService } from '../dishes/dishes.service';
 import { Dish } from '../dishes/models/dish.model';
 import { Order } from './dto/objects';
 import { InstitutionsService } from '../institutions/institutions.service';
+import { Institution } from '../institutions/models';
+import { UsersService } from '../users/users.service';
+import { User } from '../users/models/user.model';
 
+// todo сделать со времени скидке операции, сейчас её нету вообще...
+// Добавить способ оплаты, сейчас его нету
 @Injectable()
 export class OrdersService {
   constructor(
@@ -16,6 +25,7 @@ export class OrdersService {
     private dishOrderModel: typeof DishOrder,
     private dishesService: DishesService,
     private institutionsService: InstitutionsService,
+    private usersService: UsersService,
   ) {}
 
   private checkOrder(dishes: Dish[], orders: Order[]) {
@@ -41,30 +51,12 @@ export class OrdersService {
     }
   }
 
-  // todo: Сделать limit, offset
-  public async getOrders() {
-    return this.institutionOrderModel.findAll();
-  }
-
-  public async createOrder(data: CreateOrderInput & { user_id: number }) {
-    const dish_ids = data.orders.map(({ dish_id }) => dish_id);
-    const dishes = await this.dishesService.getDishesById(dish_ids);
-
-    // if (dish_ids.length !== dishes.length) {
-    //   throw new BadRequestException('One of dishes not found');
-    // }
-
-    const institutions_ids = Array.from(
-      new Set(dishes.map(({ institution_id }) => institution_id)),
-    );
-    const institutions = await this.institutionsService.getInstitutionsById(
-      institutions_ids,
-    );
-
-    // console.log(institutions_ids);
-
-    this.checkOrder(dishes, data.orders);
-
+  private async createDishOrder(
+    institutions_ids: number[],
+    dishes: Dish[],
+    institutions: Institution[],
+    data: CreateOrderInput & { user_id: number },
+  ) {
     await Promise.all(
       institutions_ids.map(async (institution_id) => {
         const institutionDishes = data.orders.filter(({ dish_id }) => {
@@ -138,6 +130,53 @@ export class OrdersService {
           });
       }),
     );
+  }
+
+  public async getOrders(user_id: number) {
+    const user = await this.usersService.finUserById(user_id);
+
+    if (user.is_partner) {
+      return this.institutionOrderModel.findAll({
+        where: {
+          institution_id: user.institution.id,
+        },
+        include: [User],
+      });
+    }
+
+    return this.institutionOrderModel.findAll({
+      where: {
+        user_id,
+      },
+      include: [User],
+    });
+  }
+
+  public async createOrder(data: CreateOrderInput & { user_id: number }) {
+    const user = await this.usersService.finUserById(data.user_id);
+
+    if (user.is_partner) {
+      throw new BadGatewayException('Partner can not create order');
+    }
+
+    const dish_ids = Array.from(
+      new Set(data.orders.map(({ dish_id }) => dish_id)),
+    );
+    const dishes = await this.dishesService.getDishesById(dish_ids);
+
+    if (dish_ids.length !== dishes.length) {
+      throw new BadRequestException('One of dishes not found');
+    }
+
+    const institutions_ids = Array.from(
+      new Set(dishes.map(({ institution_id }) => institution_id)),
+    );
+    const institutions = await this.institutionsService.getInstitutionsById(
+      institutions_ids,
+    );
+
+    this.checkOrder(dishes, data.orders);
+    await this.createDishOrder(institutions_ids, dishes, institutions, data);
 
     return true;
   }

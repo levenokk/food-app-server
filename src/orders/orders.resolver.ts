@@ -1,14 +1,21 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { OrdersService } from './orders.service';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateOrderInput } from './dto/inputs';
 import { CurrentUser } from '../auth/decorators/currentUser';
 import { User } from '../users/models/user.model';
+import { InstitutionOrder } from './models';
 
 @Resolver()
 export class OrdersResolver {
   constructor(private ordersService: OrdersService) {}
+
+  @UseGuards(GqlAuthGuard)
+  @Query(() => [InstitutionOrder])
+  public async getOrders(@CurrentUser() user: User) {
+    return this.ordersService.getOrders(user.id);
+  }
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Boolean)
