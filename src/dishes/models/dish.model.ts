@@ -19,8 +19,8 @@ type CreateAttr = {
   name: string;
   image: string;
   price: number;
-  stock_price: number;
-  stock_time: number;
+  stock_price?: number;
+  stock_time?: string;
   composition: string;
   institution_id: number;
 };
@@ -57,17 +57,23 @@ export class Dish extends Model<CreateAttr> {
   })
   price: number;
 
-  @Field(() => Float)
+  @Field(() => Float, {
+    nullable: true,
+  })
   @Column({
     type: DataType.FLOAT,
+    allowNull: true,
   })
   stock_price: number;
 
-  @Field(() => Date)
+  @Field(() => Date, {
+    nullable: true,
+  })
   @Column({
     type: DataType.DATE,
+    allowNull: true,
   })
-  stock_time: string;
+  stock_time: string | null;
 
   @Field(() => String)
   @Column

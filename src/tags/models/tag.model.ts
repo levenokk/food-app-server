@@ -2,8 +2,8 @@ import { BelongsToMany, Column, Model, Table } from 'sequelize-typescript';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Institution } from '../../institutions/models';
 import { InstitutionTag } from './institution-tag.model';
-import { Dish } from "../../dishes/models/dish.model";
-import { DishTag } from "./dish-tag.model";
+import { Dish } from '../../dishes/models/dish.model';
+import { DishTag } from './dish-tag.model';
 
 type CreateAttr = {
   name: string;

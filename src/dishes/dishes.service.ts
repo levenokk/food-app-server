@@ -6,7 +6,12 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Dish } from './models/dish.model';
-import { CreateDishInput, GetDishesInput, UpdateDishInput } from './dto/inputs';
+import {
+  CreateDishInput,
+  GetDishesInput,
+  StockTime,
+  UpdateDishInput,
+} from './dto/inputs';
 import { UsersService } from '../users/users.service';
 import {
   Institution,
@@ -17,6 +22,7 @@ import { Tag } from '../tags/models';
 import { Filling } from '../fillings/models';
 import { FillingsService } from '../fillings/fillings.service';
 import { Sequelize } from 'sequelize-typescript';
+import * as moment from 'moment';
 
 @Injectable()
 export class DishesService {
@@ -107,6 +113,7 @@ export class DishesService {
     id,
     user_id,
     filling_ids,
+    stock_time,
     ...data
   }: UpdateDishInput & { user_id: number }) {
     const user = await this.usersService.finUserById(user_id);
@@ -149,7 +156,31 @@ export class DishesService {
       await dish.$set('fillings', filling_ids);
     }
 
-    await dish.update(data);
+    let time = null;
+
+    if (stock_time) {
+      switch (stock_time) {
+        case StockTime.ONE_DAY:
+          time = moment().add(1, 'day');
+          break;
+        case StockTime.ONE_WEEK:
+          time = moment().add(1, 'week');
+          break;
+        case StockTime.TWO_WEEKS:
+          time = moment().add(1, 'weeks');
+          break;
+        case StockTime.ONE_MOUTH:
+          time = moment().add(1, 'month');
+          break;
+        default:
+          time = moment();
+          break;
+      }
+
+      time = time.valueOf();
+    }
+
+    await dish.update({ ...data, stock_time: time });
 
     return dish.reload();
   }

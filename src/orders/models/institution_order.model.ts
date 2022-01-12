@@ -14,17 +14,6 @@ import { DishOrder } from './dish_order.model';
 
 // todo: переделать поля Number на INT
 
-type CreateAttr = {
-  institution_id: number;
-  user_id: number;
-  status: Status;
-  rating: number;
-  delivery: number;
-  latitude: string;
-  longitude: string;
-  cost: number;
-};
-
 export enum Status {
   NEW = 'NEW',
   CANCELED = 'CANCELED',
@@ -37,6 +26,28 @@ export enum Status {
 registerEnumType(Status, {
   name: 'Status',
 });
+
+export enum InstitutionOrderPayMethods {
+  ONLINE = 'ONLINE',
+  CARD = 'CARD',
+  CACHE = 'CACHE',
+}
+
+registerEnumType(InstitutionOrderPayMethods, {
+  name: 'InstitutionOrderPayMethods',
+});
+
+type CreateAttr = {
+  institution_id: number;
+  user_id: number;
+  status: Status;
+  rating: number;
+  delivery: number;
+  latitude: string;
+  longitude: string;
+  cost: number;
+  pay_method: InstitutionOrderPayMethods;
+};
 
 @ObjectType()
 @Table({
@@ -97,4 +108,10 @@ export class InstitutionOrder extends Model<CreateAttr> {
   @Field(() => User)
   @BelongsTo(() => User)
   user: User;
+
+  @Field(() => InstitutionOrderPayMethods)
+  @Column({
+    type: DataType.ENUM('ONLINE', 'CARD', 'CACHE'),
+  })
+  pay_method: InstitutionOrderPayMethods;
 }

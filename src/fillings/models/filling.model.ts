@@ -10,8 +10,7 @@ import { Institution } from '../../institutions/models';
 import { Field, Float, ID, ObjectType } from '@nestjs/graphql';
 import { Dish } from '../../dishes/models/dish.model';
 import { DishFilling } from './dish-filling.model';
-import { DishOrder } from '../../orders/models/dish_order.model';
-import { FillingOrder } from '../../orders/models/filling_order.model';
+import { DishOrder, FillingOrder } from '../../orders/models';
 
 type CreateAttrs = {
   name: string;

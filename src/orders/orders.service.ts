@@ -13,9 +13,10 @@ import { InstitutionsService } from '../institutions/institutions.service';
 import { Institution } from '../institutions/models';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/models/user.model';
+import * as moment from 'moment';
 
-// todo сделать со времени скидке операции, сейчас её нету вообще...
-// Добавить способ оплаты, сейчас его нету
+//todo: сделать рефактор кода, тут можно сократить
+
 @Injectable()
 export class OrdersService {
   constructor(
@@ -69,11 +70,15 @@ export class OrdersService {
             let price = 0;
             const dish = dishes.find(({ id }) => id === dish_id);
 
-            price +=
-              (dish.stock_price ? dish.stock_price : dish.price) * quality;
+            if (moment().valueOf() < moment(dish.stock_time).valueOf()) {
+              price += dish.stock_price * quality;
+            } else {
+              price += dish.price * quality;
+            }
+
             price += dish.fillings
               .filter(({ id }) => filling_ids.includes(id))
-              .reduce((a, b) => a + b.price, 0);
+              .reduce((a, b) => a + Number(b.price), 0);
 
             return price;
           })
@@ -97,6 +102,7 @@ export class OrdersService {
           status: Status.NEW,
           latitude: data.latitude,
           cost,
+          pay_method: data.pay_method,
         });
 
         const dishOrders = institutionDishes.map(
@@ -104,11 +110,15 @@ export class OrdersService {
             const dish = dishes.find(({ id }) => id === dish_id);
             let price = 0;
 
-            price +=
-              (dish.stock_price ? dish.stock_price : dish.price) * quality;
+            if (moment().valueOf() < moment(dish.stock_time).valueOf()) {
+              price += dish.stock_price * quality;
+            } else {
+              price += dish.price * quality;
+            }
+
             price += dish.fillings
               .filter(({ id }) => filling_ids.includes(id))
-              .reduce((a, b) => a + b.price, 0);
+              .reduce((a, b) => a + Number(b.price), 0);
 
             return {
               dish_id,
@@ -122,7 +132,7 @@ export class OrdersService {
         );
 
         await this.dishOrderModel
-          .bulkCreate(dishOrders, {})
+          .bulkCreate(dishOrders)
           .then((createdDishOrders) => {
             createdDishOrders.forEach(async (order, index) => {
               await order.$set('fillings', dishOrders[index].fillings);
@@ -140,7 +150,7 @@ export class OrdersService {
         where: {
           institution_id: user.institution.id,
         },
-        include: [User],
+        include: [User, DishOrder],
       });
     }
 
@@ -148,7 +158,7 @@ export class OrdersService {
       where: {
         user_id,
       },
-      include: [User],
+      include: [User, DishOrder],
     });
   }
 

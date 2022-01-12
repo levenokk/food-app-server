@@ -11,12 +11,6 @@ export class CreateDishInput {
   @Field(() => Float)
   price: number;
 
-  @Field(() => Float)
-  stock_price: number;
-
-  @Field(() => Date)
-  stock_time: number;
-
   @Field(() => String)
   composition: string;
 

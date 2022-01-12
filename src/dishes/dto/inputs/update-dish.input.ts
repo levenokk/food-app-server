@@ -1,4 +1,22 @@
-import { Field, Float, ID, InputType, Int } from '@nestjs/graphql';
+import {
+  Field,
+  Float,
+  ID,
+  InputType,
+  Int,
+  registerEnumType,
+} from '@nestjs/graphql';
+
+export enum StockTime {
+  ONE_DAY = 'ONE_DAY',
+  ONE_WEEK = 'ONE_WEEK',
+  TWO_WEEKS = 'TWO_WEEKS',
+  ONE_MOUTH = 'ONE_MOUTH',
+}
+
+registerEnumType(StockTime, {
+  name: 'StockTime',
+});
 
 @InputType()
 export class UpdateDishInput {
@@ -25,10 +43,10 @@ export class UpdateDishInput {
   })
   stock_price: number;
 
-  @Field(() => Date, {
+  @Field(() => StockTime, {
     nullable: true,
   })
-  stock_time: number;
+  stock_time: StockTime | null;
 
   @Field(() => String, {
     nullable: true,
