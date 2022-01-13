@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { DishOrder, InstitutionOrder, Status } from './models';
-import { CreateOrderInput } from './dto/inputs';
+import { ChangeOrderStatusInput, CreateOrderInput } from './dto/inputs';
 import { DishesService } from '../dishes/dishes.service';
 import { Dish } from '../dishes/models/dish.model';
 import { Order } from './dto/objects';
@@ -187,6 +187,28 @@ export class OrdersService {
 
     this.checkOrder(dishes, data.orders);
     await this.createDishOrder(institutions_ids, dishes, institutions, data);
+
+    return true;
+  }
+
+  public async changeOrderStatus({
+    user_id,
+    ...data
+  }: ChangeOrderStatusInput & { user_id: number }) {
+    const user = await this.usersService.finUserById(user_id);
+
+    if (!user.is_partner) {
+      return new BadGatewayException('User can not change order status');
+    }
+    const order = await this.institutionOrderModel.findByPk(data.order_id);
+
+    if (order.institution_id !== user.institution.id) {
+      return new BadGatewayException('You can change only your orders');
+    }
+
+    order.status = data.status;
+
+    await order.save();
 
     return true;
   }
