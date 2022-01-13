@@ -68,17 +68,12 @@ export class MessagesResolver {
       if (context?.user_id) {
         const user = await this.usersService.finUserById(context.user_id);
         const institution_order = await this.ordersService.getOrderById(
-          Message.order_id,
-        );
-
-        console.log(
-          user.id === institution_order.user_id ||
-            institution_order.user.id === user.id,
+          Message.institution_order_id,
         );
 
         return (
           user.id === institution_order.user_id ||
-          institution_order.user.id === user.id
+          institution_order.institution_id === user.institution.id
         );
       }
 

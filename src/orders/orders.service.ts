@@ -214,6 +214,8 @@ export class OrdersService {
   }
 
   public async getOrderById(id: number) {
-    return this.institutionOrderModel.findByPk(id);
+    return this.institutionOrderModel.findByPk(id, {
+      include: [User],
+    });
   }
 }
