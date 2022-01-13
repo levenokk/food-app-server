@@ -212,4 +212,8 @@ export class OrdersService {
 
     return true;
   }
+
+  public async getOrderById(id: number) {
+    return this.institutionOrderModel.findByPk(id);
+  }
 }

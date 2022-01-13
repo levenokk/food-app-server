@@ -15,5 +15,6 @@ import { UsersModule } from '../users/users.module';
     SequelizeModule.forFeature([InstitutionOrder, FillingOrder, DishOrder]),
   ],
   providers: [OrdersService, OrdersResolver],
+  exports: [OrdersService],
 })
 export class OrdersModule {}

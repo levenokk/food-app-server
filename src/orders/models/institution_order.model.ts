@@ -11,6 +11,7 @@ import { Institution } from '../../institutions/models';
 import { User } from '../../users/models/user.model';
 import { Field, ID, ObjectType, registerEnumType, Int } from '@nestjs/graphql';
 import { DishOrder } from './dish_order.model';
+import { Message } from '../../messages/models';
 
 // todo: переделать поля Number на INT
 
@@ -114,4 +115,12 @@ export class InstitutionOrder extends Model<CreateAttr> {
     type: DataType.ENUM('ONLINE', 'CARD', 'CACHE'),
   })
   pay_method: InstitutionOrderPayMethods;
+
+  @Field(() => Message, {
+    defaultValue: [],
+  })
+  @HasMany(() => Message, {
+    onDelete: 'CASCADE',
+  })
+  messages: Message[];
 }

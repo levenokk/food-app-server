@@ -10,6 +10,7 @@ import { InstitutionsModule } from './institutions/institutions.module';
 import { TagsModule } from './tags/tags.module';
 import { FillingsModule } from './fillings/fillings.module';
 import { OrdersModule } from './orders/orders.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -28,6 +29,25 @@ import { OrdersModule } from './orders/orders.module';
       autoLoadModels: true,
     }),
     GraphQLModule.forRoot({
+      installSubscriptionHandlers: true,
+      subscriptions: {
+        'graphql-ws': {
+          onConnect: (context: any) => {
+            const { connectionParams, extra } = context;
+            console.log('here');
+            extra.user = { user: {} };
+          },
+        },
+        'subscriptions-transport-ws': {
+          onConnect: (connectionParams) => {
+            const authToken = connectionParams;
+
+            console.log(connectionParams);
+
+            return {};
+          },
+        },
+      },
       playground: true,
       debug: true,
       autoSchemaFile: true,
@@ -40,6 +60,7 @@ import { OrdersModule } from './orders/orders.module';
     TagsModule,
     FillingsModule,
     OrdersModule,
+    MessagesModule,
   ],
 })
 export class AppModule {}

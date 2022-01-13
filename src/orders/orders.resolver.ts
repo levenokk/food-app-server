@@ -2,7 +2,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { OrdersService } from './orders.service';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ChangeOrderStatusInput, CreateOrderInput } from "./dto/inputs";
+import { ChangeOrderStatusInput, CreateOrderInput } from './dto/inputs';
 import { CurrentUser } from '../auth/decorators/currentUser';
 import { User } from '../users/models/user.model';
 import { InstitutionOrder } from './models';
