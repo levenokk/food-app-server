@@ -14,12 +14,18 @@ import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PubSub } from 'graphql-subscriptions';
 import { SendMessageInput } from './dto/inputs';
+import { UsersService } from '../users/users.service';
+import { OrdersService } from '../orders/orders.service';
 
 const pubSub = new PubSub();
 
 @Resolver()
 export class MessagesResolver {
-  constructor(private messagesService: MessagesService) {}
+  constructor(
+    private messagesService: MessagesService,
+    private usersService: UsersService,
+    private ordersService: OrdersService,
+  ) {}
 
   @UseGuards(GqlAuthGuard)
   @Query(() => [Message], {
@@ -58,8 +64,25 @@ export class MessagesResolver {
     resolve: ({ Message }) => {
       return Message;
     },
-    filter(payload, variables, user: User) {
-      return true;
+    async filter(this: MessagesResolver, { Message }, variables, context) {
+      if (context?.user_id) {
+        const user = await this.usersService.finUserById(context.user_id);
+        const institution_order = await this.ordersService.getOrderById(
+          Message.order_id,
+        );
+
+        console.log(
+          user.id === institution_order.user_id ||
+            institution_order.user.id === user.id,
+        );
+
+        return (
+          user.id === institution_order.user_id ||
+          institution_order.user.id === user.id
+        );
+      }
+
+      return false;
     },
   })
   async messageSent() {

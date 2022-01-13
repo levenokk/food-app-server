@@ -11,6 +11,7 @@ import { TagsModule } from './tags/tags.module';
 import { FillingsModule } from './fillings/fillings.module';
 import { OrdersModule } from './orders/orders.module';
 import { MessagesModule } from './messages/messages.module';
+import { decodeToken } from './services';
 
 @Module({
   imports: [
@@ -31,20 +32,22 @@ import { MessagesModule } from './messages/messages.module';
     GraphQLModule.forRoot({
       installSubscriptionHandlers: true,
       subscriptions: {
-        'graphql-ws': {
-          onConnect: (context: any) => {
-            const { connectionParams, extra } = context;
-            console.log('here');
-            extra.user = { user: {} };
-          },
-        },
+        'graphql-ws': true,
         'subscriptions-transport-ws': {
           onConnect: (connectionParams) => {
-            const authToken = connectionParams;
+            const context: any = {};
 
-            console.log(connectionParams);
+            if (connectionParams.Authorization) {
+              const payload = decodeToken(
+                connectionParams.Authorization.split(' ')[1],
+              );
 
-            return {};
+              if (payload) {
+                context.user_id = (payload as { id: number })?.id;
+              }
+            }
+
+            return context;
           },
         },
       },

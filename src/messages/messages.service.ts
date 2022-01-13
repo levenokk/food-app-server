@@ -29,7 +29,7 @@ export class MessagesService {
 
     if (
       order.user_id !== user_id &&
-      order.institution_id !== user.institution.id
+      order.institution_id !== user?.institution?.id
     ) {
       throw new BadGatewayException('You can not get stranger chat');
     }
@@ -51,7 +51,7 @@ export class MessagesService {
 
     if (
       order.user_id !== user_id &&
-      order.institution_id !== user.institution.id
+      order.institution_id !== user?.institution?.id
     ) {
       throw new BadGatewayException(
         'You can not send message to stranger chat',

@@ -34,6 +34,9 @@ export class Message extends Model<CreateAttr> {
   @ForeignKey(() => InstitutionOrder)
   institution_order_id: number;
 
+  @BelongsTo(() => InstitutionOrder)
+  institution_order: InstitutionOrder;
+
   @ForeignKey(() => User)
   user_id: number;
 
