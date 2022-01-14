@@ -7,7 +7,7 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
-import { Dish } from '../../dishes/models/dish.model';
+import { Dish } from '../../dishes/models';
 import { InstitutionOrder } from './institution_order.model';
 import { User } from '../../users/models/user.model';
 import { Filling } from '../../fillings/models';

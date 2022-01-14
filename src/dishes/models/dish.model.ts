@@ -14,6 +14,8 @@ import { Tag } from '../../tags/models';
 import { DishTag } from '../../tags/models/dish-tag.model';
 import { DishFilling, Filling } from '../../fillings/models';
 import { DishOrder } from '../../orders/models';
+import { User } from '../../users/models/user.model';
+import { FavoriteDish } from './favorite-dish.model';
 
 type CreateAttr = {
   name: string;
@@ -97,4 +99,7 @@ export class Dish extends Model<CreateAttr> {
   @Field(() => [DishOrder])
   @HasMany(() => DishOrder)
   dish_orders: DishOrder[];
+
+  @BelongsToMany(() => User, () => FavoriteDish)
+  users: User[];
 }

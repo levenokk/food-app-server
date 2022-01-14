@@ -1,5 +1,5 @@
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { Dish } from './models/dish.model';
+import { Dish } from './models';
 import { DishesService } from './dishes.service';
 import { CreateDishInput, GetDishesInput, UpdateDishInput } from './dto/inputs';
 import { UseGuards } from '@nestjs/common';
@@ -56,5 +56,35 @@ export class DishesResolver {
     id: number,
   ) {
     return this.dishesService.removeDish(id, user.id);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Boolean)
+  public async addDishToFavorite(
+    @CurrentUser() user: User,
+    @Args('dish_id', {
+      type: () => ID,
+    })
+    dish_id: number,
+  ) {
+    return this.dishesService.addDishToFavorite(dish_id, user.id);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Boolean)
+  public async removeDishFromFavorite(
+    @CurrentUser() user: User,
+    @Args('dish_id', {
+      type: () => ID,
+    })
+    dish_id: number,
+  ) {
+    return this.dishesService.removeFavoriteDish(dish_id, user.id);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Query(() => [Dish])
+  public async getFavoriteDishes(@CurrentUser() user: User) {
+    return this.dishesService.getFavoriteDishes(user.id);
   }
 }

@@ -37,7 +37,7 @@ import { decodeToken } from './services';
           onConnect: (connectionParams) => {
             const context: any = {};
 
-            if (connectionParams.Authorization) {
+            if (connectionParams?.Authorization) {
               const payload = decodeToken(
                 connectionParams.Authorization.split(' ')[1],
               );

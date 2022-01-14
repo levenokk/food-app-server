@@ -5,11 +5,13 @@ import {
   DataType,
   HasMany,
   HasOne,
+  BelongsToMany,
 } from 'sequelize-typescript';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { UserExtraAddress } from '../../extra-address/models/user-extra-address.model';
+import { UserExtraAddress } from '../../extra-address/models';
 import { Institution } from '../../institutions/models';
 import { InstitutionOrder } from '../../orders/models';
+import { Dish, FavoriteDish } from '../../dishes/models';
 
 type CreateAttr = {
   phone_number: string;
@@ -109,4 +111,7 @@ export class User extends Model<CreateAttr> {
   @Field(() => [InstitutionOrder])
   @HasMany(() => InstitutionOrder)
   orders: InstitutionOrder[];
+
+  @BelongsToMany(() => Dish, () => FavoriteDish)
+  favorite_dishes: Dish[];
 }

@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Dish } from './models/dish.model';
+import { Dish } from './models';
 import {
   CreateDishInput,
   GetDishesInput,
@@ -208,5 +208,54 @@ export class DishesService {
     await dish.destroy();
 
     return dish;
+  }
+
+  public async addDishToFavorite(dish_id: number, user_id: number) {
+    const dish = await this.dishModel.findByPk(dish_id);
+    const user = await this.usersService.finUserById(user_id);
+
+    if (!dish) {
+      throw new NotFoundException();
+    }
+
+    if (user.is_partner) {
+      throw new BadGatewayException();
+    }
+
+    try {
+      await user.$add('favorite_dishes', dish_id);
+    } catch {
+      throw new BadGatewayException();
+    }
+
+    return true;
+  }
+
+  public async removeFavoriteDish(dish_id: number, user_id: number) {
+    const dish = await this.dishModel.findByPk(dish_id);
+    const user = await this.usersService.finUserById(user_id);
+
+    if (!dish) {
+      throw new NotFoundException();
+    }
+
+    if (user.is_partner) {
+      throw new BadGatewayException();
+    }
+
+    await user.$remove('favorite_dishes', dish_id);
+
+    return true;
+  }
+
+  // todo: добавить лимит и тд
+  public async getFavoriteDishes(user_id: number) {
+    const user = await this.usersService.finUserById(user_id);
+
+    if (user.is_partner) {
+      throw new BadGatewayException();
+    }
+
+    return user.favorite_dishes;
   }
 }

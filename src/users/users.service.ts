@@ -9,7 +9,7 @@ import {
   InstitutionPayMethod,
   WorkDay,
 } from '../institutions/models';
-import { Dish } from '../dishes/models/dish.model';
+import { Dish } from '../dishes/models';
 import { Tag } from '../tags/models';
 import { Filling } from '../fillings/models';
 import { InstitutionOrder } from '../orders/models';
@@ -27,6 +27,7 @@ export class UsersService {
         },
         InstitutionOrder,
         UserExtraAddress,
+        Dish,
       ],
     });
   }
@@ -43,6 +44,7 @@ export class UsersService {
           include: [WorkDay, Dish, Tag, InstitutionPayMethod, Filling],
         },
         UserExtraAddress,
+        Dish,
       ],
     });
   }
@@ -55,6 +57,7 @@ export class UsersService {
           include: [WorkDay, Dish, Tag, InstitutionPayMethod, Filling],
         },
         UserExtraAddress,
+        Dish,
       ],
     });
 
