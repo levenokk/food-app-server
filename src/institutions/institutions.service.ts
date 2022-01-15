@@ -265,4 +265,14 @@ export class InstitutionsService {
       },
     });
   }
+
+  public async getInstitution(user_id: number) {
+    const user = await this.usersService.finUserById(user_id);
+
+    if (!user.is_partner) {
+      throw new BadGatewayException();
+    }
+
+    return this.getInstitutionByUserId(user_id);
+  }
 }

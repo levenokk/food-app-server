@@ -62,6 +62,7 @@ export class InstitutionOrder extends Model<CreateAttr> {
   })
   id: number;
 
+  @Field(() => ID)
   @ForeignKey(() => Institution)
   institution_id: number;
 
