@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { User } from './models/user.model';
+import { User, UserPay } from './models';
 import { UpdateUserInput, SendCodeInput } from './dto/inputs';
 import { UserExtraAddress } from '../extra-address/models';
 import * as bcrypt from 'bcryptjs';
@@ -16,7 +16,10 @@ import { InstitutionOrder } from '../orders/models';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User) private userModel: typeof User) {}
+  constructor(
+    @InjectModel(User) private userModel: typeof User,
+    @InjectModel(UserPay) private userPayModel: typeof UserPay,
+  ) {}
 
   public async finUserById(pk: number) {
     return this.userModel.findByPk(pk, {
@@ -28,6 +31,7 @@ export class UsersService {
         InstitutionOrder,
         UserExtraAddress,
         Dish,
+        UserPay,
       ],
     });
   }
@@ -45,11 +49,12 @@ export class UsersService {
         },
         UserExtraAddress,
         Dish,
+        UserPay,
       ],
     });
   }
 
-  public async updateUser({ id, ...data }: UpdateUserInput) {
+  public async updateUser({ id, pay_methods, ...data }: UpdateUserInput) {
     const user = await this.userModel.findByPk(id, {
       include: [
         {
@@ -58,6 +63,7 @@ export class UsersService {
         },
         UserExtraAddress,
         Dish,
+        UserPay,
       ],
     });
 
@@ -65,12 +71,28 @@ export class UsersService {
       throw new NotFoundException();
     }
 
+    if (pay_methods) {
+      await this.userPayModel.destroy({
+        where: {
+          user_id: id,
+        },
+      });
+
+      const filteredPayMethods = Array.from(new Set(pay_methods));
+      const userPayMethods = filteredPayMethods.map((method) => ({
+        method,
+        user_id: id,
+      }));
+
+      await this.userPayModel.bulkCreate(userPayMethods);
+    }
+
     await user.update({
       ...data,
       is_new: false,
     });
 
-    return user;
+    return user.reload();
   }
 
   public async sendCode({ phone, is_partner }: SendCodeInput) {

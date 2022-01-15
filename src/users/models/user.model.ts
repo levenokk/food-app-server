@@ -4,7 +4,6 @@ import {
   Table,
   DataType,
   HasMany,
-  HasOne,
   BelongsToMany,
 } from 'sequelize-typescript';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
@@ -13,6 +12,7 @@ import { Institution } from '../../institutions/models';
 import { InstitutionOrder } from '../../orders/models';
 import { Dish, FavoriteDish } from '../../dishes/models';
 import { FavoriteInstitutions } from '../../institutions/models';
+import { UserPay } from './user-pay-method.model';
 
 type CreateAttr = {
   phone_number: string;
@@ -109,4 +109,10 @@ export class User extends Model<CreateAttr> {
 
   @BelongsToMany(() => Institution, () => FavoriteInstitutions)
   favorite_institutions: FavoriteInstitutions[];
+
+  @Field(() => [UserPay], {
+    defaultValue: [],
+  })
+  @HasMany(() => UserPay)
+  pay_methods: UserPay[];
 }

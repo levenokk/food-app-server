@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { UserPayMethod } from '../../models';
 
 @InputType({
   description: 'Input for update user',
@@ -25,4 +26,9 @@ export class UpdateUserInput {
     nullable: true,
   })
   notification?: boolean;
+
+  @Field(() => [UserPayMethod], {
+    nullable: true,
+  })
+  pay_methods?: UserPayMethod[];
 }

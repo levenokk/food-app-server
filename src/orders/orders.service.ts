@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { DishOrder, InstitutionOrder, Status } from './models';
 import { ChangeOrderStatusInput, CreateOrderInput } from './dto/inputs';
 import { DishesService } from '../dishes/dishes.service';
-import { Dish } from '../dishes/models/dish.model';
+import { Dish } from '../dishes/models';
 import { Order } from './dto/objects';
 import { InstitutionsService } from '../institutions/institutions.service';
 import { Institution } from '../institutions/models';
