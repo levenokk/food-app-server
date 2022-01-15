@@ -1,18 +1,22 @@
 import {
-  BadGatewayException,
   BadRequestException,
+  ForbiddenException,
   Injectable,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { DishOrder, InstitutionOrder, Status } from './models';
-import { ChangeOrderStatusInput, CreateOrderInput } from './dto/inputs';
+import {
+  ChangeOrderStatusInput,
+  CreateOrderInput,
+  GetOrdersInput,
+} from './dto/inputs';
 import { DishesService } from '../dishes/dishes.service';
 import { Dish } from '../dishes/models';
 import { Order } from './dto/objects';
 import { InstitutionsService } from '../institutions/institutions.service';
 import { Institution } from '../institutions/models';
 import { UsersService } from '../users/users.service';
-import { User } from '../users/models/user.model';
+import { User } from '../users/models';
 import * as moment from 'moment';
 
 //todo: сделать рефактор кода, тут можно сократить
@@ -142,7 +146,10 @@ export class OrdersService {
     );
   }
 
-  public async getOrders(user_id: number) {
+  public async getOrders({
+    user_id,
+    ...data
+  }: GetOrdersInput & { user_id: number }) {
     const user = await this.usersService.finUserById(user_id);
 
     if (user.is_partner) {
@@ -154,6 +161,7 @@ export class OrdersService {
         where: {
           institution_id: institution.id,
         },
+        ...data,
         include: [User, DishOrder],
       });
     }
@@ -162,6 +170,7 @@ export class OrdersService {
       where: {
         user_id,
       },
+      ...data,
       include: [User, DishOrder],
     });
   }
@@ -170,7 +179,7 @@ export class OrdersService {
     const user = await this.usersService.finUserById(data.user_id);
 
     if (user.is_partner) {
-      throw new BadGatewayException('Partner can not create order');
+      throw new ForbiddenException('Partner can not create order');
     }
 
     const dish_ids = Array.from(
@@ -190,6 +199,7 @@ export class OrdersService {
     );
 
     this.checkOrder(dishes, data.orders);
+
     await this.createDishOrder(institutions_ids, dishes, institutions, data);
 
     return true;
@@ -205,12 +215,12 @@ export class OrdersService {
     );
 
     if (!user.is_partner) {
-      return new BadGatewayException('User can not change order status');
+      return new ForbiddenException('User can not change order status');
     }
     const order = await this.institutionOrderModel.findByPk(data.order_id);
 
     if (order.institution_id !== institution.id) {
-      return new BadGatewayException('You can change only your orders');
+      return new ForbiddenException('You can change only your orders');
     }
 
     order.status = data.status;

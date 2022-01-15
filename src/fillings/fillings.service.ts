@@ -1,4 +1,4 @@
-import { BadGatewayException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Filling } from './models';
 import { GetFillingsInput } from './dto/inputs/get-fillings.input';
@@ -42,7 +42,7 @@ export class FillingsService {
     );
 
     if (!user.is_partner) {
-      throw new BadGatewayException();
+      throw new ForbiddenException();
     }
 
     return this.fillingModel.create({

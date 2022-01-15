@@ -16,6 +16,7 @@ import { DishFilling, Filling } from '../../fillings/models';
 import { DishOrder } from '../../orders/models';
 import { User } from '../../users/models/user.model';
 import { FavoriteDish } from './favorite-dish.model';
+import { DishRating } from './dish-rating.model';
 
 type CreateAttr = {
   name: string;
@@ -102,4 +103,7 @@ export class Dish extends Model<CreateAttr> {
 
   @BelongsToMany(() => User, () => FavoriteDish)
   users: User[];
+
+  @HasMany(() => DishRating)
+  comments: DishRating;
 }

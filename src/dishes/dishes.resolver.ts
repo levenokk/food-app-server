@@ -1,17 +1,24 @@
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { Dish } from './models';
+import { Dish, DishRating } from './models';
 import { DishesService } from './dishes.service';
-import { CreateDishInput, GetDishesInput, UpdateDishInput } from './dto/inputs';
+import {
+  AddDishCommentsInput,
+  CreateDishInput,
+  GetDishCommentsInput,
+  GetDishesInput,
+  UpdateDishInput,
+} from './dto/inputs';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/currentUser';
-import { User } from '../users/models/user.model';
+import { User } from '../users/models';
+import { DishesObject } from './dto/objects';
 
-@Resolver(() => Dish)
+@Resolver()
 export class DishesResolver {
   constructor(private dishesService: DishesService) {}
 
-  @Query(() => [Dish])
+  @Query(() => DishesObject)
   public async getDishes(@Args('data') data: GetDishesInput) {
     return this.dishesService.getDishes(data);
   }
@@ -86,5 +93,19 @@ export class DishesResolver {
   @Query(() => [Dish])
   public async getFavoriteDishes(@CurrentUser() user: User) {
     return this.dishesService.getFavoriteDishes(user.id);
+  }
+
+  @Query(() => [DishRating])
+  public async getDishComments(@Args('data') data: GetDishCommentsInput) {
+    return this.dishesService.getDishComments(data);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => DishRating)
+  public async addDishComment(
+    @Args('data') data: AddDishCommentsInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.dishesService.addCommentToDish({ ...data, user_id: user.id });
   }
 }

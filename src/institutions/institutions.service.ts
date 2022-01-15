@@ -1,5 +1,5 @@
 import {
-  BadGatewayException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -15,6 +15,7 @@ import { Dish } from '../dishes/models';
 import { Tag } from '../tags/models';
 import { Filling } from '../fillings/models';
 import { Sequelize } from 'sequelize-typescript';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class InstitutionsService {
@@ -34,20 +35,22 @@ export class InstitutionsService {
     });
   }
 
-  public async getInstitutions({
-    offset,
-    search,
-    limit,
-  }: GetInstitutionsInput) {
-    const options: any = { offset, limit };
+  public async getInstitutions({ search, ...data }: GetInstitutionsInput) {
+    const options: any = data;
 
     if (search) {
       options.where = {
-        name: search,
+        [Op.and]: [
+          {
+            name: {
+              [Op.iLike]: `%${search}%`,
+            },
+          },
+        ],
       };
     }
 
-    return this.institutionModel.findAll({
+    return this.institutionModel.findAndCountAll({
       ...options,
       include: [
         WorkDay,
@@ -59,6 +62,7 @@ export class InstitutionsService {
         InstitutionPayMethod,
         Filling,
       ],
+      distinct: true,
     });
   }
 
@@ -86,7 +90,7 @@ export class InstitutionsService {
     const user = await this.usersService.finUserById(data.user_id);
 
     if (!user.is_partner) {
-      throw new BadGatewayException();
+      throw new ForbiddenException();
     }
 
     const institution = await this.institutionModel.create(data, {
@@ -186,7 +190,7 @@ export class InstitutionsService {
     const user = await this.usersService.finUserById(user_id);
 
     if (!user.is_partner) {
-      throw new BadGatewayException();
+      throw new ForbiddenException();
     }
 
     const institution = await this.institutionModel.findOne({
@@ -212,7 +216,7 @@ export class InstitutionsService {
     const institution = await this.institutionModel.findByPk(institution_id);
 
     if (user.is_partner) {
-      throw new BadGatewayException();
+      throw new ForbiddenException();
     }
 
     if (!institution) {
@@ -222,7 +226,7 @@ export class InstitutionsService {
     try {
       await user.$add('favorite_institutions', institution_id);
     } catch {
-      throw new BadGatewayException();
+      throw new ForbiddenException();
     }
 
     return true;
@@ -236,7 +240,7 @@ export class InstitutionsService {
     const institution = await this.institutionModel.findByPk(institution_id);
 
     if (user.is_partner) {
-      throw new BadGatewayException();
+      throw new ForbiddenException();
     }
 
     if (!institution) {
@@ -252,7 +256,7 @@ export class InstitutionsService {
     const user = await this.usersService.finUserById(user_id);
 
     if (user.is_partner) {
-      throw new BadGatewayException();
+      throw new ForbiddenException();
     }
 
     return user.favorite_institutions;
@@ -270,7 +274,7 @@ export class InstitutionsService {
     const user = await this.usersService.finUserById(user_id);
 
     if (!user.is_partner) {
-      throw new BadGatewayException();
+      throw new ForbiddenException();
     }
 
     return this.getInstitutionByUserId(user_id);

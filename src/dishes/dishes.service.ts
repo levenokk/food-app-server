@@ -1,13 +1,15 @@
 import {
-  BadGatewayException,
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Dish } from './models';
+import { Dish, DishRating } from './models';
 import {
+  AddDishCommentsInput,
   CreateDishInput,
+  GetDishCommentsInput,
   GetDishesInput,
   StockTime,
   UpdateDishInput,
@@ -24,11 +26,13 @@ import { FillingsService } from '../fillings/fillings.service';
 import { Sequelize } from 'sequelize-typescript';
 import * as moment from 'moment';
 import { InstitutionsService } from '../institutions/institutions.service';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class DishesService {
   constructor(
     @InjectModel(Dish) private dishModel: typeof Dish,
+    @InjectModel(DishRating) private dishRatingModel: typeof DishRating,
     private usersService: UsersService,
     private fillingsService: FillingsService,
     private institutionsService: InstitutionsService,
@@ -43,16 +47,22 @@ export class DishesService {
     });
   }
 
-  public async getDishes({ search, offset, limit }: GetDishesInput) {
-    const options: any = { offset, limit };
+  public async getDishes({ search, ...data }: GetDishesInput) {
+    const options: any = data;
 
     if (search) {
       options.where = {
-        name: search,
+        [Op.and]: [
+          {
+            name: {
+              [Op.iLike]: `%${search}%`,
+            },
+          },
+        ],
       };
     }
 
-    return this.dishModel.findAll({
+    return this.dishModel.findAndCountAll({
       ...options,
       include: [
         {
@@ -62,6 +72,7 @@ export class DishesService {
         Tag,
         Filling,
       ],
+      distinct: true,
     });
   }
 
@@ -90,7 +101,7 @@ export class DishesService {
     );
 
     if (!user.is_partner) {
-      throw new BadGatewayException();
+      throw new ForbiddenException();
     }
 
     const fillings = await this.fillingsService.getFillingsById(filling_ids);
@@ -127,7 +138,7 @@ export class DishesService {
     );
 
     if (!user.is_partner) {
-      throw new BadGatewayException();
+      throw new ForbiddenException();
     }
 
     const dish = await this.dishModel.findByPk(id, {
@@ -146,7 +157,7 @@ export class DishesService {
     }
 
     if (dish.institution.user_id !== user_id) {
-      throw new BadGatewayException();
+      throw new ForbiddenException();
     }
 
     if (filling_ids.length) {
@@ -210,7 +221,7 @@ export class DishesService {
     }
 
     if (dish.institution.user_id !== user_id) {
-      throw new BadGatewayException();
+      throw new ForbiddenException();
     }
 
     await dish.destroy();
@@ -227,13 +238,13 @@ export class DishesService {
     }
 
     if (user.is_partner) {
-      throw new BadGatewayException();
+      throw new ForbiddenException();
     }
 
     try {
       await user.$add('favorite_dishes', dish_id);
     } catch {
-      throw new BadGatewayException();
+      throw new ForbiddenException();
     }
 
     return true;
@@ -248,7 +259,7 @@ export class DishesService {
     }
 
     if (user.is_partner) {
-      throw new BadGatewayException();
+      throw new ForbiddenException();
     }
 
     await user.$remove('favorite_dishes', dish_id);
@@ -261,9 +272,40 @@ export class DishesService {
     const user = await this.usersService.finUserById(user_id);
 
     if (user.is_partner) {
-      throw new BadGatewayException();
+      throw new ForbiddenException();
     }
 
     return user.favorite_dishes;
+  }
+
+  public async getDishComments(data: GetDishCommentsInput) {
+    return this.dishRatingModel.findAll({
+      where: {
+        dish_id: data.dish_id,
+      },
+    });
+  }
+
+  public async addCommentToDish(
+    data: AddDishCommentsInput & { user_id: number },
+  ) {
+    const user = await this.usersService.finUserById(data.user_id);
+
+    if (user.is_partner) {
+      throw new ForbiddenException();
+    }
+
+    const comment = await this.dishRatingModel.findOne({
+      where: {
+        dish_id: data.dish_id,
+        user_id: data.user_id,
+      },
+    });
+
+    if (comment) {
+      throw new BadRequestException('You already wrote review');
+    }
+
+    return this.dishRatingModel.create(data);
   }
 }

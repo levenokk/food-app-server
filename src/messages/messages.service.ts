@@ -1,5 +1,5 @@
 import {
-  BadGatewayException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -32,7 +32,7 @@ export class MessagesService {
     }
 
     if (order.user_id !== user_id && order.institution_id !== institution?.id) {
-      throw new BadGatewayException('You can not get stranger chat');
+      throw new ForbiddenException('You can not get stranger chat');
     }
 
     return order.messages;
@@ -53,9 +53,7 @@ export class MessagesService {
     }
 
     if (order.user_id !== user_id && order.institution_id !== institution?.id) {
-      throw new BadGatewayException(
-        'You can not send message to stranger chat',
-      );
+      throw new ForbiddenException('You can not send message to stranger chat');
     }
 
     return this.messageModel.create({

@@ -9,13 +9,14 @@ import {
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/currentUser';
-import { User } from '../users/models/user.model';
+import { User } from '../users/models';
+import { InstitutionsObject } from './dto/objects';
 
 @Resolver(() => Institution)
 export class InstitutionsResolver {
   constructor(private institutionsService: InstitutionsService) {}
 
-  @Query(() => [Institution])
+  @Query(() => InstitutionsObject)
   public async getInstitutions(@Args('data') data: GetInstitutionsInput) {
     return this.institutionsService.getInstitutions(data);
   }
