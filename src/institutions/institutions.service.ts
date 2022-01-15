@@ -11,7 +11,7 @@ import {
 } from './dto/inputs';
 import { UsersService } from '../users/users.service';
 import { WorkDay, Institution, InstitutionPayMethod } from './models';
-import { Dish } from '../dishes/models/dish.model';
+import { Dish } from '../dishes/models';
 import { Tag } from '../tags/models';
 import { Filling } from '../fillings/models';
 import { Sequelize } from 'sequelize-typescript';
@@ -62,7 +62,7 @@ export class InstitutionsService {
     });
   }
 
-  public async getInstitution(pk: number) {
+  public async getInstitutionById(pk: number) {
     return this.institutionModel.findByPk(pk, {
       include: [
         WorkDay,
@@ -202,5 +202,67 @@ export class InstitutionsService {
     await institution.destroy();
 
     return true;
+  }
+
+  public async addInstitutionToFavorite(
+    institution_id: number,
+    user_id: number,
+  ) {
+    const user = await this.usersService.finUserById(user_id);
+    const institution = await this.institutionModel.findByPk(institution_id);
+
+    if (user.is_partner) {
+      throw new BadGatewayException();
+    }
+
+    if (!institution) {
+      throw new NotFoundException();
+    }
+
+    try {
+      await user.$add('favorite_institutions', institution_id);
+    } catch {
+      throw new BadGatewayException();
+    }
+
+    return true;
+  }
+
+  public async removeInstitutionFromFavorite(
+    institution_id: number,
+    user_id: number,
+  ) {
+    const user = await this.usersService.finUserById(user_id);
+    const institution = await this.institutionModel.findByPk(institution_id);
+
+    if (user.is_partner) {
+      throw new BadGatewayException();
+    }
+
+    if (!institution) {
+      throw new NotFoundException();
+    }
+
+    await user.$remove('favorite_institutions', institution_id);
+
+    return true;
+  }
+
+  public async getFavoriteInstitutions(user_id: number) {
+    const user = await this.usersService.finUserById(user_id);
+
+    if (user.is_partner) {
+      throw new BadGatewayException();
+    }
+
+    return user.favorite_institutions;
+  }
+
+  public async getInstitutionByUserId(user_id: number) {
+    return this.institutionModel.findOne({
+      where: {
+        user_id,
+      },
+    });
   }
 }

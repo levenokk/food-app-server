@@ -5,12 +5,14 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { UsersModule } from '../users/users.module';
 import { FillingsModule } from '../fillings/fillings.module';
 import { FavoriteDish, Dish } from './models';
+import { InstitutionsModule } from '../institutions/institutions.module';
 
 @Module({
   imports: [
     SequelizeModule.forFeature([Dish, FavoriteDish]),
     UsersModule,
     FillingsModule,
+    InstitutionsModule,
   ],
   providers: [DishesService, DishesResolver],
   exports: [DishesService],

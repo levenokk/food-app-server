@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { InstitutionExtraAddress, UserExtraAddress } from './models';
 import { CreateExtraAddressInput, UpdateExtraAddressInput } from './dto/inputs';
 import { UsersService } from '../users/users.service';
+import { InstitutionsService } from '../institutions/institutions.service';
 
 @Injectable()
 export class ExtraAddressService {
@@ -12,6 +13,7 @@ export class ExtraAddressService {
     @InjectModel(InstitutionExtraAddress)
     private institutionExtraAddressModel: typeof InstitutionExtraAddress,
     private usersService: UsersService,
+    private institutionsService: InstitutionsService,
   ) {}
 
   public async createUserExtraAddress(
@@ -53,6 +55,9 @@ export class ExtraAddressService {
     ...data
   }: CreateExtraAddressInput & { user_id: number }) {
     const user = await this.usersService.finUserById(user_id);
+    const institution = await this.institutionsService.getInstitutionByUserId(
+      user_id,
+    );
 
     if (!user.is_partner) {
       throw new ForbiddenException();
@@ -60,7 +65,7 @@ export class ExtraAddressService {
 
     return this.institutionExtraAddressModel.create({
       ...data,
-      institution_id: user.institution.id,
+      institution_id: institution.id,
     });
   }
 
@@ -70,6 +75,9 @@ export class ExtraAddressService {
     ...data
   }: UpdateExtraAddressInput & { user_id: number }) {
     const user = await this.usersService.finUserById(user_id);
+    const institution = await this.institutionsService.getInstitutionByUserId(
+      user_id,
+    );
 
     if (!user.is_partner) {
       throw new ForbiddenException();
@@ -77,7 +85,7 @@ export class ExtraAddressService {
 
     const address = await this.institutionExtraAddressModel.findByPk(id);
 
-    if (address.institution_id !== user.institution.id) {
+    if (address.institution_id !== institution.id) {
       throw new ForbiddenException();
     }
 
@@ -88,6 +96,9 @@ export class ExtraAddressService {
 
   public async removeInstitutionExtraAddress(pk: number, user_id: number) {
     const user = await this.usersService.finUserById(user_id);
+    const institution = await this.institutionsService.getInstitutionByUserId(
+      user_id,
+    );
 
     if (!user.is_partner) {
       throw new ForbiddenException();
@@ -95,7 +106,7 @@ export class ExtraAddressService {
 
     const address = await this.institutionExtraAddressModel.findByPk(pk);
 
-    if (address.institution_id === user.institution.id) {
+    if (address.institution_id === institution.id) {
       await address.destroy();
 
       return address;

@@ -8,6 +8,7 @@ import { Message } from './models';
 import { OrdersService } from '../orders/orders.service';
 import { UsersService } from '../users/users.service';
 import { SendMessageInput } from './dto/inputs';
+import { InstitutionsService } from '../institutions/institutions.service';
 
 // todo добавить лимиты
 
@@ -17,20 +18,20 @@ export class MessagesService {
     @InjectModel(Message) private messageModel: typeof Message,
     private ordersService: OrdersService,
     private usersService: UsersService,
+    private institutionsService: InstitutionsService,
   ) {}
 
   public async getOrderChat(id: number, user_id: number) {
     const order = await this.ordersService.getOrderById(id);
-    const user = await this.usersService.finUserById(user_id);
+    const institution = await this.institutionsService.getInstitutionByUserId(
+      user_id,
+    );
 
     if (!order) {
       throw new NotFoundException();
     }
 
-    if (
-      order.user_id !== user_id &&
-      order.institution_id !== user?.institution?.id
-    ) {
+    if (order.user_id !== user_id && order.institution_id !== institution?.id) {
       throw new BadGatewayException('You can not get stranger chat');
     }
 
@@ -42,17 +43,16 @@ export class MessagesService {
     user_id,
     ...data
   }: SendMessageInput & { user_id: number }) {
-    const user = await this.usersService.finUserById(user_id);
     const order = await this.ordersService.getOrderById(order_id);
+    const institution = await this.institutionsService.getInstitutionByUserId(
+      user_id,
+    );
 
     if (!order) {
       throw new NotFoundException();
     }
 
-    if (
-      order.user_id !== user_id &&
-      order.institution_id !== user?.institution?.id
-    ) {
+    if (order.user_id !== user_id && order.institution_id !== institution?.id) {
       throw new BadGatewayException(
         'You can not send message to stranger chat',
       );

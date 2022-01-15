@@ -146,9 +146,13 @@ export class OrdersService {
     const user = await this.usersService.finUserById(user_id);
 
     if (user.is_partner) {
+      const institution = await this.institutionsService.getInstitutionByUserId(
+        user_id,
+      );
+
       return this.institutionOrderModel.findAll({
         where: {
-          institution_id: user.institution.id,
+          institution_id: institution.id,
         },
         include: [User, DishOrder],
       });
@@ -196,13 +200,16 @@ export class OrdersService {
     ...data
   }: ChangeOrderStatusInput & { user_id: number }) {
     const user = await this.usersService.finUserById(user_id);
+    const institution = await this.institutionsService.getInstitutionByUserId(
+      user_id,
+    );
 
     if (!user.is_partner) {
       return new BadGatewayException('User can not change order status');
     }
     const order = await this.institutionOrderModel.findByPk(data.order_id);
 
-    if (order.institution_id !== user.institution.id) {
+    if (order.institution_id !== institution.id) {
       return new BadGatewayException('You can change only your orders');
     }
 

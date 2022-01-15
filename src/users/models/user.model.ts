@@ -12,6 +12,7 @@ import { UserExtraAddress } from '../../extra-address/models';
 import { Institution } from '../../institutions/models';
 import { InstitutionOrder } from '../../orders/models';
 import { Dish, FavoriteDish } from '../../dishes/models';
+import { FavoriteInstitutions } from '../../institutions/models';
 
 type CreateAttr = {
   phone_number: string;
@@ -99,19 +100,13 @@ export class User extends Model<CreateAttr> {
   })
   is_new: boolean;
 
-  @Field(() => Institution, {
-    defaultValue: null,
-    nullable: true,
-  })
-  @HasOne(() => Institution, {
-    onDelete: 'CASCADE',
-  })
-  institution: Institution;
-
   @Field(() => [InstitutionOrder])
   @HasMany(() => InstitutionOrder)
   orders: InstitutionOrder[];
 
   @BelongsToMany(() => Dish, () => FavoriteDish)
   favorite_dishes: Dish[];
+
+  @BelongsToMany(() => Institution, () => FavoriteInstitutions)
+  favorite_institutions: FavoriteInstitutions[];
 }

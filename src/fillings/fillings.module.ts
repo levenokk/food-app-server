@@ -4,9 +4,14 @@ import { FillingsResolver } from './fillings.resolver';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Filling, DishFilling } from './models/';
 import { UsersModule } from '../users/users.module';
+import { InstitutionsModule } from '../institutions/institutions.module';
 
 @Module({
-  imports: [UsersModule, SequelizeModule.forFeature([Filling, DishFilling])],
+  imports: [
+    UsersModule,
+    InstitutionsModule,
+    SequelizeModule.forFeature([Filling, DishFilling]),
+  ],
   providers: [FillingsService, FillingsResolver],
   exports: [FillingsService],
 })

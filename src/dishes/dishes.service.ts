@@ -23,6 +23,7 @@ import { Filling } from '../fillings/models';
 import { FillingsService } from '../fillings/fillings.service';
 import { Sequelize } from 'sequelize-typescript';
 import * as moment from 'moment';
+import { InstitutionsService } from '../institutions/institutions.service';
 
 @Injectable()
 export class DishesService {
@@ -30,6 +31,7 @@ export class DishesService {
     @InjectModel(Dish) private dishModel: typeof Dish,
     private usersService: UsersService,
     private fillingsService: FillingsService,
+    private institutionsService: InstitutionsService,
   ) {}
 
   public async getDishesById(ids: number[]) {
@@ -83,6 +85,9 @@ export class DishesService {
     ...data
   }: CreateDishInput & { user_id: number }) {
     const user = await this.usersService.finUserById(user_id);
+    const institution = await this.institutionsService.getInstitutionByUserId(
+      user_id,
+    );
 
     if (!user.is_partner) {
       throw new BadGatewayException();
@@ -90,7 +95,7 @@ export class DishesService {
 
     const fillings = await this.fillingsService.getFillingsById(filling_ids);
     const isInstitutionsFilling = fillings.every(
-      (filling) => filling.institution_id === user.institution.id,
+      (filling) => filling.institution_id === institution.id,
     );
 
     if (!isInstitutionsFilling) {
@@ -101,7 +106,7 @@ export class DishesService {
 
     const dish = await this.dishModel.create({
       ...data,
-      institution_id: user.institution.id,
+      institution_id: institution.id,
     });
 
     await dish.$set('tags', tag_ids);
@@ -117,6 +122,9 @@ export class DishesService {
     ...data
   }: UpdateDishInput & { user_id: number }) {
     const user = await this.usersService.finUserById(user_id);
+    const institution = await this.institutionsService.getInstitutionByUserId(
+      user_id,
+    );
 
     if (!user.is_partner) {
       throw new BadGatewayException();
@@ -144,7 +152,7 @@ export class DishesService {
     if (filling_ids.length) {
       const fillings = await this.fillingsService.getFillingsById(filling_ids);
       const isInstitutionsFilling = fillings.every(
-        (filling) => filling.institution_id === user.institution.id,
+        (filling) => filling.institution_id === institution.id,
       );
 
       if (!isInstitutionsFilling) {

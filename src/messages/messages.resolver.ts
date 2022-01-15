@@ -16,6 +16,7 @@ import { PubSub } from 'graphql-subscriptions';
 import { SendMessageInput } from './dto/inputs';
 import { UsersService } from '../users/users.service';
 import { OrdersService } from '../orders/orders.service';
+import { InstitutionsService } from '../institutions/institutions.service';
 
 const pubSub = new PubSub();
 
@@ -25,6 +26,7 @@ export class MessagesResolver {
     private messagesService: MessagesService,
     private usersService: UsersService,
     private ordersService: OrdersService,
+    private institutionsService: InstitutionsService,
   ) {}
 
   @UseGuards(GqlAuthGuard)
@@ -67,13 +69,17 @@ export class MessagesResolver {
     async filter(this: MessagesResolver, { Message }, variables, context) {
       if (context?.user_id) {
         const user = await this.usersService.finUserById(context.user_id);
+        const institution =
+          await this.institutionsService.getInstitutionByUserId(
+            context.user_id,
+          );
         const institution_order = await this.ordersService.getOrderById(
           Message.institution_order_id,
         );
 
         return (
           user.id === institution_order.user_id ||
-          institution_order.institution_id === user.institution.id
+          institution_order.institution_id === institution.id
         );
       }
 

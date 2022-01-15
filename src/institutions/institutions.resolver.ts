@@ -21,13 +21,13 @@ export class InstitutionsResolver {
   }
 
   @Query(() => Institution)
-  public async getInstitution(
+  public async getInstitutionById(
     @Args('id', {
       type: () => ID,
     })
     id: number,
   ) {
-    return this.institutionsService.getInstitution(id);
+    return this.institutionsService.getInstitutionById(id);
   }
 
   @UseGuards(GqlAuthGuard)
@@ -60,5 +60,41 @@ export class InstitutionsResolver {
   @Mutation(() => Boolean)
   public async removeInstitution(@CurrentUser() user: User) {
     return this.institutionsService.removeInstitution(user.id);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Boolean)
+  public async addInstitutionToFavorite(
+    @CurrentUser() user: User,
+    @Args('institution_id', {
+      type: () => ID,
+    })
+    institution_id: number,
+  ) {
+    return this.institutionsService.addInstitutionToFavorite(
+      institution_id,
+      user.id,
+    );
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Boolean)
+  public async removeInstitutionFromFavorite(
+    @CurrentUser() user: User,
+    @Args('institution_id', {
+      type: () => ID,
+    })
+    institution_id: number,
+  ) {
+    return this.institutionsService.removeInstitutionFromFavorite(
+      institution_id,
+      user.id,
+    );
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Query(() => [Institution])
+  public async getFavoriteInstitutions(@CurrentUser() user: User) {
+    return this.institutionsService.getFavoriteInstitutions(user.id);
   }
 }
