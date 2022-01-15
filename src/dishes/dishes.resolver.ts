@@ -12,7 +12,7 @@ import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/currentUser';
 import { User } from '../users/models';
-import { DishesObject } from './dto/objects';
+import { CommentsObject, DishesObject } from './dto/objects';
 
 @Resolver()
 export class DishesResolver {
@@ -95,7 +95,7 @@ export class DishesResolver {
     return this.dishesService.getFavoriteDishes(user.id);
   }
 
-  @Query(() => [DishRating])
+  @Query(() => CommentsObject)
   public async getDishComments(@Args('data') data: GetDishCommentsInput) {
     return this.dishesService.getDishComments(data);
   }

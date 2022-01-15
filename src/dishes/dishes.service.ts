@@ -278,12 +278,23 @@ export class DishesService {
     return user.favorite_dishes;
   }
 
-  public async getDishComments(data: GetDishCommentsInput) {
-    return this.dishRatingModel.findAll({
+  public async getDishComments({ dish_id, ...data }: GetDishCommentsInput) {
+    const commentsSum = await this.dishRatingModel.sum('stars');
+    const comments: {
+      rows: DishRating[];
+      count: number;
+      avarage_rating?: number;
+    } = await this.dishRatingModel.findAndCountAll({
       where: {
-        dish_id: data.dish_id,
+        dish_id: dish_id,
       },
+      ...data,
+      distinct: true,
     });
+
+    comments.avarage_rating = commentsSum / comments.count;
+
+    return comments;
   }
 
   public async addCommentToDish(
