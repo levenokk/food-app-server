@@ -12,9 +12,17 @@ import { FillingsModule } from './fillings/fillings.module';
 import { OrdersModule } from './orders/orders.module';
 import { MessagesModule } from './messages/messages.module';
 import { decodeToken } from './services';
+import { UploadModule } from './upload/upload.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'client'),
+      serveRoot: '/client',
+      renderPath: '/client',
+    }),
     ConfigModule.forRoot({
       envFilePath:
         process.env.NODE_ENV === 'development' ? '.development.env' : '.env',
@@ -64,6 +72,7 @@ import { decodeToken } from './services';
     FillingsModule,
     OrdersModule,
     MessagesModule,
+    UploadModule,
   ],
 })
 export class AppModule {}

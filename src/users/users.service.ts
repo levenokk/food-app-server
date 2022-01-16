@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User, UserPay } from './models';
 import { UpdateUserInput, SendCodeInput } from './dto/inputs';
@@ -13,12 +17,14 @@ import { Dish } from '../dishes/models';
 import { Tag } from '../tags/models';
 import { Filling } from '../fillings/models';
 import { InstitutionOrder } from '../orders/models';
+import { UploadService } from '../upload/upload.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User) private userModel: typeof User,
     @InjectModel(UserPay) private userPayModel: typeof UserPay,
+    private uploadService: UploadService,
   ) {}
 
   public async finUserById(pk: number) {
@@ -54,7 +60,12 @@ export class UsersService {
     });
   }
 
-  public async updateUser({ id, pay_methods, ...data }: UpdateUserInput) {
+  public async updateUser({
+    id,
+    pay_methods,
+    image,
+    ...data
+  }: UpdateUserInput) {
     const user = await this.userModel.findByPk(id, {
       include: [
         {
@@ -87,9 +98,16 @@ export class UsersService {
       await this.userPayModel.bulkCreate(userPayMethods);
     }
 
+    if (!image && !user.image) {
+      throw new BadRequestException();
+    }
+
+    const image_url = await this.uploadService.uploadFile(await image);
+
     await user.update({
       ...data,
       is_new: false,
+      image: image_url,
     });
 
     return user.reload();

@@ -1,5 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { UserPayMethod } from '../../models';
+import { GraphQLUpload, FileUpload } from 'graphql-upload';
 
 @InputType({
   description: 'Input for update user',
@@ -12,10 +13,10 @@ export class UpdateUserInput {
   })
   name?: string;
 
-  @Field(() => String, {
+  @Field(() => GraphQLUpload, {
     nullable: true,
   })
-  image?: string;
+  image?: FileUpload;
 
   @Field(() => Boolean, {
     nullable: true,

@@ -19,6 +19,7 @@ type CreateAttr = {
   name?: string;
   is_partner: boolean;
   is_new?: boolean;
+  image?: string;
 };
 
 @ObjectType()
