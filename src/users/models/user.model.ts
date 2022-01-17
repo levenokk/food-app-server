@@ -5,6 +5,7 @@ import {
   DataType,
   HasMany,
   BelongsToMany,
+  HasOne,
 } from 'sequelize-typescript';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { UserExtraAddress } from '../../extra-address/models';
@@ -116,4 +117,10 @@ export class User extends Model<CreateAttr> {
   })
   @HasMany(() => UserPay)
   pay_methods: UserPay[];
+
+  @Field(() => Institution)
+  @HasOne(() => Institution, {
+    foreignKey: 'user_id',
+  })
+  institution: Institution;
 }

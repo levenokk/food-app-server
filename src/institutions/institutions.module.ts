@@ -9,6 +9,7 @@ import {
   FavoriteInstitutions,
 } from './models';
 import { UsersModule } from '../users/users.module';
+import { UploadModule } from '../upload/upload.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { UsersModule } from '../users/users.module';
       FavoriteInstitutions,
     ]),
     UsersModule,
+    UploadModule,
   ],
   providers: [InstitutionsService, InstitutionsResolver],
   exports: [InstitutionsService],

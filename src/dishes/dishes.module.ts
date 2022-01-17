@@ -6,6 +6,7 @@ import { UsersModule } from '../users/users.module';
 import { FillingsModule } from '../fillings/fillings.module';
 import { FavoriteDish, Dish, DishRating } from './models';
 import { InstitutionsModule } from '../institutions/institutions.module';
+import { UploadModule } from '../upload/upload.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { InstitutionsModule } from '../institutions/institutions.module';
     UsersModule,
     FillingsModule,
     InstitutionsModule,
+    UploadModule,
   ],
   providers: [DishesService, DishesResolver],
   exports: [DishesService],

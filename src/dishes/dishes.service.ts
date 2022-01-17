@@ -27,6 +27,7 @@ import { Sequelize } from 'sequelize-typescript';
 import * as moment from 'moment';
 import { InstitutionsService } from '../institutions/institutions.service';
 import { Op } from 'sequelize';
+import { UploadService } from '../upload/upload.service';
 
 // todo: сделать так чтобы показывало есть ли ресторан или блюдо в избраном
 // todo: добавить загрузку фоток
@@ -40,6 +41,7 @@ export class DishesService {
     private usersService: UsersService,
     private fillingsService: FillingsService,
     private institutionsService: InstitutionsService,
+    private uploadService: UploadService,
   ) {}
 
   public async getDishesById(ids: number[]) {
@@ -97,6 +99,7 @@ export class DishesService {
     user_id,
     tag_ids,
     filling_ids,
+    image,
     ...data
   }: CreateDishInput & { user_id: number }) {
     const user = await this.usersService.finUserById(user_id);
@@ -119,9 +122,12 @@ export class DishesService {
       );
     }
 
+    const image_url = await this.uploadService.uploadFile(await image);
+
     const dish = await this.dishModel.create({
       ...data,
       institution_id: institution.id,
+      image: image_url,
     });
 
     await dish.$set('tags', tag_ids);
@@ -134,6 +140,7 @@ export class DishesService {
     user_id,
     filling_ids,
     stock_time,
+    image,
     ...data
   }: UpdateDishInput & { user_id: number }) {
     const user = await this.usersService.finUserById(user_id);
@@ -147,6 +154,7 @@ export class DishesService {
 
     const dish = await this.dishModel.findByPk(id, {
       include: [
+        Institution,
         {
           model: Institution,
           include: [WorkDay, Dish, Tag, InstitutionPayMethod, Filling, Tag],
@@ -203,7 +211,15 @@ export class DishesService {
       time = time.valueOf();
     }
 
-    await dish.update({ ...data, stock_time: time });
+    let image_url = dish.image;
+
+    if (image) {
+      image_url = await this.uploadService.uploadFile(await image);
+
+      await this.uploadService.removeFile(user.image);
+    }
+
+    await dish.update({ ...data, stock_time: time, image: image_url });
 
     return dish.reload();
   }
@@ -228,6 +244,7 @@ export class DishesService {
       throw new ForbiddenException();
     }
 
+    await this.uploadService.removeFile(dish.image);
     await dish.destroy();
 
     return dish;

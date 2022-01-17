@@ -32,6 +32,12 @@ export class UsersService {
       include: [
         {
           model: Institution,
+          as: 'favorite_institutions',
+          include: [WorkDay, Dish, Tag, InstitutionPayMethod, Filling],
+        },
+        {
+          model: Institution,
+          as: 'institution',
           include: [WorkDay, Dish, Tag, InstitutionPayMethod, Filling],
         },
         InstitutionOrder,
@@ -51,6 +57,12 @@ export class UsersService {
       include: [
         {
           model: Institution,
+          as: 'favorite_institutions',
+          include: [WorkDay, Dish, Tag, InstitutionPayMethod, Filling],
+        },
+        {
+          model: Institution,
+          as: 'institution',
           include: [WorkDay, Dish, Tag, InstitutionPayMethod, Filling],
         },
         UserExtraAddress,
@@ -70,6 +82,12 @@ export class UsersService {
       include: [
         {
           model: Institution,
+          as: 'favorite_institutions',
+          include: [WorkDay, Dish, Tag, InstitutionPayMethod, Filling],
+        },
+        {
+          model: Institution,
+          as: 'institution',
           include: [WorkDay, Dish, Tag, InstitutionPayMethod, Filling],
         },
         UserExtraAddress,
@@ -98,11 +116,17 @@ export class UsersService {
       await this.userPayModel.bulkCreate(userPayMethods);
     }
 
+    let image_url = user.image;
+
     if (!image && !user.image) {
       throw new BadRequestException();
     }
 
-    const image_url = await this.uploadService.uploadFile(await image);
+    if (image) {
+      image_url = await this.uploadService.uploadFile(await image);
+
+      await this.uploadService.removeFile(user.image);
+    }
 
     await user.update({
       ...data,

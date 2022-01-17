@@ -1,13 +1,14 @@
 import { Field, ID, InputType } from '@nestjs/graphql';
 import { Day, PayMethod } from '../../models';
+import { GraphQLUpload, FileUpload } from 'graphql-upload';
 
 @InputType()
 export class CreateInstitutionsInput {
   @Field(() => String)
   name: string;
 
-  @Field(() => String)
-  image: string;
+  @Field(() => GraphQLUpload)
+  image: FileUpload;
 
   @Field(() => String)
   work_from: string;

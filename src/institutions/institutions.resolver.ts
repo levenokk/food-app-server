@@ -93,11 +93,11 @@ export class InstitutionsResolver {
     );
   }
 
-  @UseGuards(GqlAuthGuard)
-  @Query(() => [Institution])
-  public async getFavoriteInstitutions(@CurrentUser() user: User) {
-    return this.institutionsService.getFavoriteInstitutions(user.id);
-  }
+  // @UseGuards(GqlAuthGuard)
+  // @Query(() => [Institution])
+  // public async getFavoriteInstitutions(@CurrentUser() user: User) {
+  //   return this.institutionsService.getFavoriteInstitutions(user.id);
+  // }
 
   @UseGuards(GqlAuthGuard)
   @Query(() => Institution)

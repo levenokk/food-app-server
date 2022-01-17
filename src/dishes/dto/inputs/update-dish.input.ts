@@ -6,6 +6,7 @@ import {
   Int,
   registerEnumType,
 } from '@nestjs/graphql';
+import { GraphQLUpload, FileUpload } from 'graphql-upload';
 
 export enum StockTime {
   ONE_DAY = 'ONE_DAY',
@@ -28,10 +29,10 @@ export class UpdateDishInput {
   })
   name: string;
 
-  @Field(() => String, {
+  @Field(() => GraphQLUpload, {
     nullable: true,
   })
-  image: string;
+  image: FileUpload;
 
   @Field(() => Float, {
     nullable: true,

@@ -16,6 +16,7 @@ import { Tag } from '../tags/models';
 import { Filling } from '../fillings/models';
 import { Sequelize } from 'sequelize-typescript';
 import { Op } from 'sequelize';
+import { UploadService } from '../upload/upload.service';
 
 @Injectable()
 export class InstitutionsService {
@@ -25,6 +26,7 @@ export class InstitutionsService {
     @InjectModel(InstitutionPayMethod)
     private institutionPayMethodModel: typeof InstitutionPayMethod,
     private usersService: UsersService,
+    private uploadService: UploadService,
   ) {}
 
   public async getInstitutionsById(ids: number[]) {
@@ -85,6 +87,7 @@ export class InstitutionsService {
     work_days,
     tags,
     pay_methods,
+    image,
     ...data
   }: CreateInstitutionsInput & { user_id: number }) {
     const user = await this.usersService.finUserById(data.user_id);
@@ -93,18 +96,23 @@ export class InstitutionsService {
       throw new ForbiddenException();
     }
 
-    const institution = await this.institutionModel.create(data, {
-      include: [
-        WorkDay,
-        {
-          include: [Tag],
-          model: Dish,
-        },
-        Tag,
-        InstitutionPayMethod,
-        Filling,
-      ],
-    });
+    const image_url = await this.uploadService.uploadFile(image);
+
+    const institution = await this.institutionModel.create(
+      { ...data, image: image_url },
+      {
+        include: [
+          WorkDay,
+          {
+            include: [Tag],
+            model: Dish,
+          },
+          Tag,
+          InstitutionPayMethod,
+          Filling,
+        ],
+      },
+    );
     const days = work_days.map((day) => ({
       day: day,
       institution_id: institution.id,
@@ -128,6 +136,7 @@ export class InstitutionsService {
     tags,
     work_days,
     pay_methods,
+    image,
     ...data
   }: UpdateInstitutionsInput & { user_id: number }) {
     const institution = await this.institutionModel.findOne({
@@ -180,7 +189,15 @@ export class InstitutionsService {
       await this.institutionPayMethodModel.bulkCreate(institutionPayMethods);
     }
 
-    await institution.update(data);
+    let image_url = institution.image;
+
+    if (image) {
+      image_url = await this.uploadService.uploadFile(await image);
+
+      await this.uploadService.removeFile(institution.image);
+    }
+
+    await institution.update({ ...data, image: image_url });
     await institution.$set('tags', tags);
 
     return institution.reload();
@@ -203,6 +220,7 @@ export class InstitutionsService {
       throw new NotFoundException();
     }
 
+    await this.uploadService.removeFile(institution.image);
     await institution.destroy();
 
     return true;
@@ -267,6 +285,16 @@ export class InstitutionsService {
       where: {
         user_id,
       },
+      include: [
+        WorkDay,
+        {
+          include: [Tag],
+          model: Dish,
+        },
+        Tag,
+        InstitutionPayMethod,
+        Filling,
+      ],
     });
   }
 
