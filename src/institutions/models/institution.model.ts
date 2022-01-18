@@ -17,6 +17,7 @@ import { InstitutionPayMethod } from './institution-pay-method.model';
 import { Filling } from '../../fillings/models';
 import { InstitutionOrder } from '../../orders/models';
 import { FavoriteInstitutions } from './favorite-institutions.model';
+import { InstitutionEvaluation } from './institution-evaluation.model';
 
 type CreateAttr = {
   name: string;
@@ -143,4 +144,7 @@ export class Institution extends Model<CreateAttr> {
 
   @BelongsToMany(() => User, () => FavoriteInstitutions)
   users: User[];
+
+  @HasMany(() => InstitutionEvaluation)
+  elevations: InstitutionEvaluation[];
 }

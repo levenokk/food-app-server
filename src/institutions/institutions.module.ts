@@ -7,6 +7,7 @@ import {
   InstitutionPayMethod,
   WorkDay,
   FavoriteInstitutions,
+  InstitutionEvaluation,
 } from './models';
 import { UsersModule } from '../users/users.module';
 import { UploadModule } from '../upload/upload.module';
@@ -18,6 +19,7 @@ import { UploadModule } from '../upload/upload.module';
       WorkDay,
       InstitutionPayMethod,
       FavoriteInstitutions,
+      InstitutionEvaluation,
     ]),
     UsersModule,
     UploadModule,

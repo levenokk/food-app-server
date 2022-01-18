@@ -5,6 +5,7 @@ import {
   GetInstitutionsInput,
   UpdateInstitutionsInput,
   CreateInstitutionsInput,
+  AddInstitutionElevation,
 } from './dto/inputs';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -93,15 +94,28 @@ export class InstitutionsResolver {
     );
   }
 
-  // @UseGuards(GqlAuthGuard)
-  // @Query(() => [Institution])
-  // public async getFavoriteInstitutions(@CurrentUser() user: User) {
-  //   return this.institutionsService.getFavoriteInstitutions(user.id);
-  // }
+  @UseGuards(GqlAuthGuard)
+  @Query(() => [Institution])
+  public async getFavoriteInstitutions(@CurrentUser() user: User) {
+    return this.institutionsService.getFavoriteInstitutions(user.id);
+  }
 
   @UseGuards(GqlAuthGuard)
   @Query(() => Institution)
   public async getInstitution(@CurrentUser() user: User) {
     return this.institutionsService.getInstitution(user.id);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Boolean)
+  public async addInstitutionElevation(
+    @Args('data') { institution_id, evaluation }: AddInstitutionElevation,
+    @CurrentUser() user: User,
+  ) {
+    return this.institutionsService.addElevation(
+      evaluation,
+      institution_id,
+      user.id,
+    );
   }
 }

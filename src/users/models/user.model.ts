@@ -9,7 +9,7 @@ import {
 } from 'sequelize-typescript';
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 import { UserExtraAddress } from '../../extra-address/models';
-import { Institution } from '../../institutions/models';
+import { Institution, InstitutionEvaluation } from '../../institutions/models';
 import { InstitutionOrder } from '../../orders/models';
 import { Dish, FavoriteDish } from '../../dishes/models';
 import { FavoriteInstitutions } from '../../institutions/models';
@@ -123,4 +123,7 @@ export class User extends Model<CreateAttr> {
     foreignKey: 'user_id',
   })
   institution: Institution;
+
+  @HasMany(() => InstitutionEvaluation)
+  institution_evaluations: InstitutionEvaluation[];
 }

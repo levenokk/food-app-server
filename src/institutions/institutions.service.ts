@@ -10,7 +10,12 @@ import {
   CreateInstitutionsInput,
 } from './dto/inputs';
 import { UsersService } from '../users/users.service';
-import { WorkDay, Institution, InstitutionPayMethod } from './models';
+import {
+  WorkDay,
+  Institution,
+  InstitutionPayMethod,
+  InstitutionEvaluation,
+} from './models';
 import { Dish } from '../dishes/models';
 import { Tag } from '../tags/models';
 import { Filling } from '../fillings/models';
@@ -23,6 +28,8 @@ export class InstitutionsService {
   constructor(
     @InjectModel(Institution) private institutionModel: typeof Institution,
     @InjectModel(WorkDay) private workDayModel: typeof WorkDay,
+    @InjectModel(InstitutionEvaluation)
+    private institutionEvaluationModel: typeof InstitutionEvaluation,
     @InjectModel(InstitutionPayMethod)
     private institutionPayMethodModel: typeof InstitutionPayMethod,
     private usersService: UsersService,
@@ -310,5 +317,43 @@ export class InstitutionsService {
     }
 
     return this.getInstitutionByUserId(user_id);
+  }
+
+  public async addElevation(
+    evaluation: number,
+    institution_id: number,
+    user_id: number,
+  ) {
+    const user = await this.usersService.finUserById(user_id);
+
+    if (user.is_partner) {
+      throw new ForbiddenException();
+    }
+
+    const institution = await this.institutionModel.findByPk(institution_id);
+
+    if (!institution) {
+      throw new NotFoundException();
+    }
+
+    const institutionEvaluation = await this.institutionEvaluationModel.findOne(
+      {
+        where: {
+          user_id,
+        },
+      },
+    );
+
+    if (institutionEvaluation) {
+      throw new ForbiddenException();
+    }
+
+    await this.institutionEvaluationModel.create({
+      evaluation,
+      user_id,
+      institution_id,
+    });
+
+    return true;
   }
 }
