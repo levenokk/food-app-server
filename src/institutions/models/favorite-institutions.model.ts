@@ -1,6 +1,6 @@
 import { ForeignKey, Model, Table } from 'sequelize-typescript';
 import { Institution } from './institution.model';
-import { User } from '../../users/models/user.model';
+import { User } from '../../users/models';
 
 @Table({
   tableName: 'favorite_institutions',

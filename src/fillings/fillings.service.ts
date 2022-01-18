@@ -1,9 +1,12 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Filling } from './models';
-import { GetFillingsInput } from './dto/inputs/get-fillings.input';
+import { GetFillingsInput, CreateFillingInput } from './dto/inputs';
 import { UsersService } from '../users/users.service';
-import { CreateFillingInput } from './dto/inputs/create-filling.input';
 import { Sequelize } from 'sequelize-typescript';
 import { InstitutionsService } from '../institutions/institutions.service';
 import { UploadService } from '../upload/upload.service';
@@ -48,12 +51,36 @@ export class FillingsService {
       throw new ForbiddenException();
     }
 
-    const image_url = await this.uploadService.uploadFile(image);
+    const image_url = await this.uploadService.uploadFile(await image);
 
     return this.fillingModel.create({
       institution_id: institution.id,
       image: image_url,
       ...data,
     });
+  }
+
+  public async removeFilling(id: number, user_id: number) {
+    const filling = await this.fillingModel.findByPk(id);
+    const user = await this.usersService.finUserById(user_id);
+
+    if (!user.is_partner) {
+      throw new ForbiddenException();
+    }
+
+    if (!filling) {
+      throw new NotFoundException();
+    }
+
+    console.log(filling.institution_id, user.institution.id);
+
+    if (filling.institution_id !== user.institution.id) {
+      throw new ForbiddenException();
+    }
+
+    await this.uploadService.removeFile(filling.image);
+    await filling.destroy();
+
+    return true;
   }
 }

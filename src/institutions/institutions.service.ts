@@ -96,7 +96,11 @@ export class InstitutionsService {
       throw new ForbiddenException();
     }
 
-    const image_url = await this.uploadService.uploadFile(image);
+    if (user.institution) {
+      throw new ForbiddenException();
+    }
+
+    const image_url = await this.uploadService.uploadFile(await image);
 
     const institution = await this.institutionModel.create(
       { ...data, image: image_url },

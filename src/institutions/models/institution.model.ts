@@ -7,8 +7,8 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import { User } from '../../users/models/user.model';
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { User } from '../../users/models';
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 import { WorkDay } from './work-day.model';
 import { Dish } from '../../dishes/models';
 import { InstitutionTag, Tag } from '../../tags/models';
@@ -78,7 +78,7 @@ export class Institution extends Model<CreateAttr> {
   })
   address: string;
 
-  @Field(() => Number)
+  @Field(() => Int)
   @Column({
     type: DataType.INTEGER({
       decimals: 5,
@@ -86,7 +86,7 @@ export class Institution extends Model<CreateAttr> {
   })
   shipping_cost: number;
 
-  @Field(() => Number)
+  @Field(() => Int)
   @Column({
     type: DataType.INTEGER({
       decimals: 5,

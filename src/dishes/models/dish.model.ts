@@ -14,7 +14,7 @@ import { Tag } from '../../tags/models';
 import { DishTag } from '../../tags/models/dish-tag.model';
 import { DishFilling, Filling } from '../../fillings/models';
 import { DishOrder } from '../../orders/models';
-import { User } from '../../users/models/user.model';
+import { User } from '../../users/models';
 import { FavoriteDish } from './favorite-dish.model';
 import { DishRating } from './dish-rating.model';
 

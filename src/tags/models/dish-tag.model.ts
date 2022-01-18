@@ -1,6 +1,6 @@
 import { ForeignKey, Model, Table } from 'sequelize-typescript';
 import { Tag } from './tag.model';
-import { Dish } from '../../dishes/models/dish.model';
+import { Dish } from '../../dishes/models';
 
 @Table({
   tableName: 'dish_tags',

@@ -29,10 +29,6 @@ import { InstitutionsService } from '../institutions/institutions.service';
 import { Op } from 'sequelize';
 import { UploadService } from '../upload/upload.service';
 
-// todo: сделать так чтобы показывало есть ли ресторан или блюдо в избраном
-// todo: добавить загрузку фоток
-// todo: добавить подписку что юзер пишет, хз пока как я буду это проверять...
-
 @Injectable()
 export class DishesService {
   constructor(

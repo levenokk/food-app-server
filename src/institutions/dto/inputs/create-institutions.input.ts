@@ -1,4 +1,4 @@
-import { Field, ID, InputType } from '@nestjs/graphql';
+import { Field, Float, ID, InputType } from '@nestjs/graphql';
 import { Day, PayMethod } from '../../models';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
 
@@ -19,10 +19,10 @@ export class CreateInstitutionsInput {
   @Field(() => String)
   address: string;
 
-  @Field(() => Number)
+  @Field(() => Float)
   shipping_cost: number;
 
-  @Field(() => Number)
+  @Field(() => Float)
   free_delivery: number;
 
   @Field(() => [Day])

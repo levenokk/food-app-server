@@ -9,7 +9,7 @@ import {
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 import { Dish } from '../../dishes/models';
 import { InstitutionOrder } from './institution_order.model';
-import { User } from '../../users/models/user.model';
+import { User } from '../../users/models';
 import { Filling } from '../../fillings/models';
 import { FillingOrder } from './filling_order.model';
 
@@ -48,7 +48,7 @@ export class DishOrder extends Model<CreateAttr> {
   @ForeignKey(() => User)
   user_id: number;
 
-  @Field(() => Number)
+  @Field(() => Int)
   @Column({
     type: DataType.FLOAT,
   })

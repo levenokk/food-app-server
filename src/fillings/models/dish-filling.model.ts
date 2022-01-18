@@ -1,5 +1,5 @@
 import { ForeignKey, Model, Table } from 'sequelize-typescript';
-import { Dish } from '../../dishes/models/dish.model';
+import { Dish } from '../../dishes/models';
 import { Filling } from './filling.model';
 
 @Table({

@@ -7,7 +7,7 @@ import {
   BelongsToMany,
   HasOne,
 } from 'sequelize-typescript';
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 import { UserExtraAddress } from '../../extra-address/models';
 import { Institution } from '../../institutions/models';
 import { InstitutionOrder } from '../../orders/models';
@@ -36,7 +36,7 @@ export class User extends Model<CreateAttr> {
   })
   id: number;
 
-  @Field(() => Number)
+  @Field(() => Int)
   @Column({
     allowNull: false,
     unique: true,

@@ -8,7 +8,7 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { Institution } from '../../institutions/models';
-import { User } from '../../users/models/user.model';
+import { User } from '../../users/models';
 import { Field, ID, ObjectType, registerEnumType, Int } from '@nestjs/graphql';
 import { DishOrder } from './dish_order.model';
 import { Message } from '../../messages/models';

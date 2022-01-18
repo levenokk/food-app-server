@@ -1,5 +1,5 @@
 import { Column, ForeignKey, Model, Table } from 'sequelize-typescript';
-import { User } from '../../users/models/user.model';
+import { User } from '../../users/models';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 type CreateAttr = {

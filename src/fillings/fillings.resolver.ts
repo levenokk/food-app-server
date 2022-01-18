@@ -1,4 +1,4 @@
-import { Args, Resolver, Query, Mutation } from '@nestjs/graphql';
+import { Args, Resolver, Query, Mutation, ID } from '@nestjs/graphql';
 import { FillingsService } from './fillings.service';
 import { GetFillingsInput } from './dto/inputs/get-fillings.input';
 import { Filling } from './models';
@@ -31,5 +31,14 @@ export class FillingsResolver {
       ...data,
       user_id: user.id,
     });
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Boolean)
+  public async removeInstitutionFilling(
+    @CurrentUser() user: User,
+    @Args('id', { type: () => ID }) id: number,
+  ) {
+    return this.fillingsService.removeFilling(id, user.id);
   }
 }
