@@ -19,8 +19,6 @@ import { UsersService } from '../users/users.service';
 import { User } from '../users/models';
 import * as moment from 'moment';
 
-//todo: сделать рефактор кода, тут можно сократить
-
 @Injectable()
 export class OrdersService {
   constructor(

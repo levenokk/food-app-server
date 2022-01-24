@@ -64,18 +64,41 @@ export class DishesService {
       };
     }
 
-    return this.dishModel.findAndCountAll({
+    const count = await this.dishModel.count({
+      ...options,
+    });
+
+    const dishes = await this.dishModel.findAll({
       ...options,
       include: [
         {
-          model: Institution,
-          include: [WorkDay, Dish, Tag, InstitutionPayMethod, Filling, Tag],
+          model: DishRating,
+          as: 'comments',
+          attributes: [],
+          duplicating: false,
         },
         Tag,
-        Filling,
       ],
+      attributes: [
+        'id',
+        'name',
+        'stock_time',
+        'image',
+        'price',
+        'stock_price',
+        'stock_time',
+        'composition',
+        [Sequelize.fn('avg', Sequelize.col('comments.stars')), 'avg'],
+      ],
+      // order: [[Sequelize.col('avg'), 'ASC']],
+      // group: ['Dish.id'],
       distinct: true,
     });
+
+    return {
+      count,
+      rows: [...dishes],
+    };
   }
 
   public async getDish(pk: number) {
